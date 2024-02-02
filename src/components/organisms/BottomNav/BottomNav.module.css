@@ -1,0 +1,9 @@
+.Container {
+    width: 100vw;
+    height: var(--bottom-nav-height);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: var(--bottom-nav-background);
+}
