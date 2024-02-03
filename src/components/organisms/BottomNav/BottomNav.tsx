@@ -2,9 +2,8 @@ import Box from '@mui/material/Box'
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
 import HomeIcon from '@mui/icons-material/Home'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
-import PersonIcon from '@mui/icons-material/Person'
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 
@@ -31,7 +30,7 @@ const BottomNav = () => {
                             navigate(Route.PLAYERS)
                             break
                         case 2:
-                            navigate(Route.ACCOUNT)
+                            navigate(Route.LEADERBOARD)
                             break
                     }
                 }}
@@ -41,7 +40,7 @@ const BottomNav = () => {
                     label="Players"
                     icon={<SportsBaseballIcon />}
                 />
-                <BottomNavigationAction label="Account" icon={<PersonIcon />} />
+                <BottomNavigationAction label="Leaderboard" icon={<LeaderboardIcon />} />
             </BottomNavigation>
         </Box>
     )

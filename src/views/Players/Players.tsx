@@ -25,7 +25,7 @@ const Players = () => {
     return (
         <Box className="PageContainer">
             <PlayerForm updatePlayers={getPlayers} />
-            {players && players.length && players.map((item) => (
+            {(players && players.length) && players.map((item) => (
                 <Box key={item.id} className="ArrayContainer">
                     <Typography variant="subtitle1" fontWeight="bold">
                         {item.name}

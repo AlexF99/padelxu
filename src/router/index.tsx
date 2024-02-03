@@ -5,6 +5,7 @@ import Home from '../views/Home/Home'
 import NotFound from '../views/NotFound/NotFound'
 import Players from '../views/Players/Players'
 import NewMatch from '../views/NewMatch/NewMatch'
+import Leaderboard from '../views/Leaderboard/Leaderboard'
 
 enum Route {
     ROOT = '/',
@@ -12,7 +13,7 @@ enum Route {
     FAVORITES = '/favorites',
     PLAYERS = '/players',
     NEW_MATCH = '/newmatch',
-    ACCOUNT = '/account',
+    LEADERBOARD = '/leaderboard',
     NOTFOUND = '*',
 }
 
@@ -28,6 +29,10 @@ const publicRoutes = [
     {
         path: Route.NEW_MATCH,
         element: <NewMatch />,
+    },
+    {
+        path: Route.LEADERBOARD,
+        element: <Leaderboard />,
     },
     {
         path: Route.NOTFOUND,

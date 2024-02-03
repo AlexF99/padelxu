@@ -14,8 +14,6 @@ const Home = () => {
         querySnapshot.forEach((doc) => {
             updatedMatches.push({ id: doc.id, ...doc.data() })
         });
-        console.log(updatedMatches);
-
         setMatches(updatedMatches)
     }
 
