@@ -66,9 +66,9 @@ export default function Leaderboard() {
                 label="Age"
                 onChange={handleChange}
             >
-                <MenuItem value="wins">Wins</MenuItem>
-                <MenuItem value="sets">Sets</MenuItem>
-                <MenuItem value="ratio">Ratio</MenuItem>
+                <MenuItem value="wins">wins</MenuItem>
+                <MenuItem value="sets">sets</MenuItem>
+                <MenuItem value="ratio">ratio</MenuItem>
             </Select>
             {players && sortedIds.map((playerid) => (
                 <Box key={playerid} className="ArrayContainer">
