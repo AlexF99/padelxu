@@ -55,7 +55,7 @@ const Navbar = () => {
                                 textDecoration: 'none',
                             }}
                         >
-                            MY-APP
+                            Xupadel
                         </Typography>
                     </Box>
 
@@ -78,7 +78,7 @@ const Navbar = () => {
                             textDecoration: 'none',
                         }}
                     >
-                        MY-APP
+                        Xupadel
                     </Typography>
 
                     <UserAvatar
