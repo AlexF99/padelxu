@@ -20,7 +20,7 @@ export default function PlayerForm(props: any) {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { name } = data;
-        const docRef = await addDoc(collection(db, "players"), { name });
+        await addDoc(collection(db, "players"), { name });
         updatePlayers();
         reset();
     }

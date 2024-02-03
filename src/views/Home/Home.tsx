@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
-import { collection, addDoc, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs } from "firebase/firestore";
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';

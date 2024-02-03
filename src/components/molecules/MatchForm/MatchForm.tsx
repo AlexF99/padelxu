@@ -1,4 +1,4 @@
-import { Box, Button, Fab, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Fab, Grid, Typography } from "@mui/material";
 import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useEffect, useState } from "react";
@@ -57,7 +57,7 @@ export default function MatchForm() {
             date: new Date()
         }
 
-        const docRef = await addDoc(collection(db, "matches"), { ...match });
+        await addDoc(collection(db, "matches"), { ...match });
         navigate("/home")
     }
 
