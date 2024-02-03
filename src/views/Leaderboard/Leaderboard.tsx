@@ -11,7 +11,7 @@ enum Criteria {
 
 export default function Leaderboard() {
     const [criteria, setCriteria] = useState<Criteria>(Criteria.WINS)
-    const [players, setPlayers] = useState<any>(new Object)
+    const [players, setPlayers] = useState<any>({})
     const [sortedIds, setSortedIds] = useState<string[]>([])
 
     const handleChange = (e: any) => {
@@ -21,14 +21,14 @@ export default function Leaderboard() {
     const getPlayers = async () => {
         const playerq = query(collection(db, "players"));
         const playerQuerySnapshot = await getDocs(playerq);
-        const updatedplayers: any = new Object();
+        const updatedplayers: any = {};
         playerQuerySnapshot.forEach((doc) => {
             updatedplayers[doc.id] = { name: doc.data().name, points: 0 }
         });
 
         const matchq = query(collection(db, "matches"));
         const matchQuerySnapshot = await getDocs(matchq);
-        const pointsMap: any = new Object();
+        const pointsMap: any = {};
         matchQuerySnapshot.forEach((doc) => {
             const match = doc.data();
             if (match.teamOne.points > match.teamTwo.points) {
