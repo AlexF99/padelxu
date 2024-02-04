@@ -51,6 +51,7 @@ export default function MatchForm() {
 
 
     const saveMatch = async () => {
+        if (teamOne.length < 2 || teamTwo.length < 2 || (points[0] === points[1])) return;
         const match = {
             teamOne: { points: points[0], players: teamOne },
             teamTwo: { points: points[1], players: teamTwo },
