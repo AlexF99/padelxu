@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,7 @@ const Home = () => {
     const [matches, setMatches] = useState<any[]>([]);
 
     const getMatches = async () => {
-        const q = query(collection(db, "matches"));
+        const q = query(collection(db, "matches"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
         const updatedMatches: any = []
         querySnapshot.forEach((doc) => {
