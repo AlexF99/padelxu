@@ -1,4 +1,4 @@
-import { Box, Fab, Grid, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from "@mui/material";
 import PlayerForm from "../../components/molecules/PlayerForm/PlayerForm";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
@@ -8,6 +8,8 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const Players = () => {
     const [players, setPlayers] = useState<any[]>([]);
+    const [open, setOpen] = useState(false);
+    const [playerDelete, setPlayerDelete] = useState("");
 
     const getPlayers = async () => {
         const q = query(collection(db, "players"));
@@ -23,14 +25,39 @@ const Players = () => {
         getPlayers();
     }, [])
 
+    const handleClickOpen = (matchId: string) => {
+        setOpen(true);
+        setPlayerDelete(matchId);
+    };
 
-    const removePlayer = async (playerId: string) => {
-        await deleteDoc(doc(db, "players", playerId));
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleAgree = async () => {
+        await deleteDoc(doc(db, "players", playerDelete));
         await getPlayers();
+        handleClose();
     }
 
     return (
         <Box className="PageContainer">
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Tem certeza que quer remover jogador?"}
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={handleClose}>Não</Button>
+                    <Button onClick={handleAgree} autoFocus>
+                        Sim
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <PlayerForm updatePlayers={getPlayers} />
             {(players && players.length) && players.map((item) => (
                 <Box key={item.id} className="ArrayContainer">
@@ -41,7 +68,7 @@ const Players = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={3}>
-                            <Fab onClick={() => removePlayer(item.id)} size="small" color="error" aria-label="remove">
+                            <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
                                 <CloseIcon />
                             </Fab>
                         </Grid>

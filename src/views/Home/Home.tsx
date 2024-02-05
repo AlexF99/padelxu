@@ -1,4 +1,4 @@
-import { Box, Button, Fab, Grid, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from '@mui/material'
 import { collection, query, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
@@ -7,6 +7,17 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const Home = () => {
     const [matches, setMatches] = useState<any[]>([]);
+    const [open, setOpen] = useState(false);
+    const [matchDelete, setMatchDelete] = useState("");
+
+    const handleClickOpen = (matchId: string) => {
+        setOpen(true);
+        setMatchDelete(matchId);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const getMatches = async () => {
         const q = query(collection(db, "matches"), orderBy("date", "desc"));
@@ -22,15 +33,32 @@ const Home = () => {
         getMatches();
     }, [])
 
-    const removeMatch = async (matchId: string) => {
-        await deleteDoc(doc(db, "matches", matchId));
+    const handleAgree = async () => {
+        await deleteDoc(doc(db, "matches", matchDelete));
         await getMatches();
+        handleClose();
     }
 
     return (
         <Box className="PageContainer">
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Tem certeza que quer apagar partida?"}
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={handleClose}>Não</Button>
+                    <Button onClick={handleAgree} autoFocus>
+                        Sim
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Button variant='contained'>
-                <Link style={{color: "#fff", textDecoration: "none"}} to={"/newmatch"}>Nova Partida</Link>
+                <Link style={{ color: "#fff", textDecoration: "none" }} to={"/newmatch"}>Nova Partida</Link>
             </Button>
             {matches.map((item) => (
                 <Box key={item.id} className="ArrayContainer">
@@ -48,7 +76,7 @@ const Home = () => {
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.points}</Typography>
                         </Grid>
                         <Grid item xs={2} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <Fab onClick={() => removeMatch(item.id)} size="small" color="error" aria-label="remove">
+                            <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
                                 <CloseIcon />
                             </Fab>
                         </Grid>
