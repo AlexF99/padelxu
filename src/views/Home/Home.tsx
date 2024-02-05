@@ -11,7 +11,7 @@ const Home = () => {
     const [open, setOpen] = useState(false);
     const [matchDelete, setMatchDelete] = useState("");
 
-    const { matches, fetchMatches, isLoading, setIsLoading } = useStore();
+    const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard } = useStore();
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);
@@ -36,6 +36,7 @@ const Home = () => {
     const handleAgree = async () => {
         await deleteDoc(doc(db, "matches", matchDelete));
         await getMatches();
+        fetchLeaderboard();
         handleClose();
     }
 

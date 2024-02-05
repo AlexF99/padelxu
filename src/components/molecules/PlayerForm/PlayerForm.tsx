@@ -3,13 +3,14 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useStore } from "../../../zustand/store";
 
 type Inputs = {
     name: string
 }
 
-export default function PlayerForm(props: any) {
-    const { updatePlayers } = props;
+export default function PlayerForm() {
+    const { fetchLeaderboard, fetchPlayers } = useStore();
 
     const {
         register,
@@ -23,7 +24,8 @@ export default function PlayerForm(props: any) {
         const { name } = data;
         if (name.length < 1) return;
         await addDoc(collection(db, "players"), { name });
-        await updatePlayers();
+        fetchPlayers()
+        fetchLeaderboard()
         reset();
     }
 
@@ -36,7 +38,7 @@ export default function PlayerForm(props: any) {
                 </div>
                 <div style={{ display: "flex" }}>
                     <Button type="submit" variant="contained">add</Button>
-                    <Button type="button" onClick={updatePlayers} color="success"><RefreshIcon /></Button>
+                    <Button type="button" onClick={fetchPlayers} color="success"><RefreshIcon /></Button>
                 </div>
             </form>
         </Box>

@@ -10,7 +10,7 @@ import { useStore } from "../../zustand/store";
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const { players, fetchPlayers, isLoading, setIsLoading } = useStore();
+    const { players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = useStore();
 
     const updatePlayers = async () => {
         setIsLoading(true);
@@ -35,6 +35,7 @@ const Players = () => {
     const handleAgree = async () => {
         await deleteDoc(doc(db, "players", playerDelete));
         await updatePlayers();
+        fetchLeaderboard();
         handleClose();
     }
 
@@ -56,7 +57,7 @@ const Players = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <PlayerForm updatePlayers={updatePlayers} />
+            <PlayerForm />
             {isLoading
                 ? <CircularProgress color="success" />
                 : players && players.map((item: any) => (
