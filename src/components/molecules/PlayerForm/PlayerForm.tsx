@@ -30,8 +30,8 @@ export default function PlayerForm(props: any) {
         <Box>
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
-                    <TextField id="outlined-basic" label="name" variant="outlined" {...register("name", { required: true })} />
-                    <Typography>{errors.name && <span>This field is required</span>}</Typography>
+                    <TextField id="outlined-basic" label="Nome" variant="outlined" {...register("name", { required: true })} />
+                    <Typography>{errors.name && <span>Campo obrigatório</span>}</Typography>
                 </div>
 
                 <Button type="submit" variant="contained">add</Button>

@@ -30,19 +30,19 @@ const Home = () => {
     return (
         <Box className="PageContainer">
             <Button variant='contained'>
-                <Link to={"/newmatch"}>Nova Partida</Link>
+                <Link style={{color: "#fff", textDecoration: "none"}} to={"/newmatch"}>Nova Partida</Link>
             </Button>
             {matches.map((item) => (
                 <Box key={item.id} className="ArrayContainer">
                     <Grid container spacing={2}>
                         <Grid item xs={5}>
-                            <h3>time 1</h3>
+                            <h3>Time 1</h3>
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[0].name}</Typography>
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[1].name}</Typography>
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.points}</Typography>
                         </Grid>
                         <Grid item xs={5}>
-                            <h3>time 2</h3>
+                            <h3>Time 2</h3>
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[0].name}</Typography>
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[1].name}</Typography>
                             <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.points}</Typography>
