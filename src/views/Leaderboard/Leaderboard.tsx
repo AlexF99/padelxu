@@ -18,42 +18,52 @@ export default function Leaderboard() {
         setCriteria(e.target.value)
     }
 
-    const getPlayers = async () => {
+    const getPlayers = async (criteria: Criteria) => {
         const playerq = query(collection(db, "players"));
         const playerQuerySnapshot = await getDocs(playerq);
         const updatedplayers: any = {};
         playerQuerySnapshot.forEach((doc) => {
-            updatedplayers[doc.id] = { name: doc.data().name, points: 0 }
+            updatedplayers[doc.id] = { name: doc.data().name, wins: 0, sets: 0, matches: 0 }
         });
 
         const matchq = query(collection(db, "matches"));
         const matchQuerySnapshot = await getDocs(matchq);
-        const pointsMap: any = {};
         matchQuerySnapshot.forEach((doc) => {
             const match = doc.data();
-            if (match.teamOne.points > match.teamTwo.points) {
-
-                pointsMap[match.teamOne.players[0].id] = (pointsMap[match.teamOne.players[0].id] ?? 0) + 1
-                pointsMap[match.teamOne.players[1].id] = (pointsMap[match.teamOne.players[1].id] ?? 0) + 1
-            } else {
-                pointsMap[match.teamTwo.players[0].id] = (pointsMap[match.teamTwo.players[0].id] ?? 0) + 1
-                pointsMap[match.teamTwo.players[1].id] = (pointsMap[match.teamTwo.players[1].id] ?? 0) + 1
-            }
-
+            match.teamOne.players.forEach((player: any) => {
+                if (updatedplayers[player.id]) {
+                    updatedplayers[player.id] = {
+                        ...updatedplayers[player.id],
+                        sets: updatedplayers[player.id].sets + match.teamOne.points,
+                        wins: updatedplayers[player.id].wins + (match.teamOne.points > match.teamTwo.points ? 1 : 0),
+                        matches: updatedplayers[player.id].matches + 1
+                    }
+                }
+            });
+            match.teamTwo.players.forEach((player: any) => {
+                if (updatedplayers[player.id]) {
+                    updatedplayers[player.id] = {
+                        ...updatedplayers[player.id],
+                        sets: updatedplayers[player.id].sets + match.teamTwo.points,
+                        wins: updatedplayers[player.id].wins + (match.teamTwo.points > match.teamOne.points ? 1 : 0),
+                        matches: updatedplayers[player.id].matches + 1
+                    }
+                }
+            });
         });
-        Object.keys(pointsMap).forEach(playerid => {
-            if (updatedplayers[playerid]) {
-                updatedplayers[playerid] = { ...updatedplayers[playerid], points: pointsMap[playerid] }
-            }
+
+        Object.keys(updatedplayers).forEach(key => updatedplayers[key] = {
+            ...updatedplayers[key],
+            ratio: updatedplayers[key].matches > 0 ? (updatedplayers[key].wins / updatedplayers[key].matches).toFixed(2) : 0
         })
 
-        const keysSorted = Object.keys(updatedplayers).sort(function (a, b) { return updatedplayers[b].points - updatedplayers[a].points })
+        const keysSorted = Object.keys(updatedplayers).sort(function (a, b) { return updatedplayers[b][criteria] - updatedplayers[a][criteria] })
         setSortedIds(keysSorted)
         setPlayers(updatedplayers)
     }
 
     useEffect(() => {
-        getPlayers();
+        getPlayers(criteria);
     }, [criteria])
 
 
@@ -76,7 +86,16 @@ export default function Leaderboard() {
                         {players[playerid]?.name}
                     </Typography>
                     <Typography variant="subtitle1" fontWeight="bold">
-                        {players[playerid]?.points}
+                        wins: {players[playerid]?.wins}
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        matches: {players[playerid]?.matches}
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        sets: {players[playerid]?.sets}
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        ratio: {players[playerid]?.ratio}
                     </Typography>
                 </Box>
             ))}
