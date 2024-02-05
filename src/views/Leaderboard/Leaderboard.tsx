@@ -2,6 +2,7 @@ import { Box, MenuItem, Select, Typography } from "@mui/material";
 import { collection, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
+import CircularProgress from '@mui/material/CircularProgress';
 
 enum Criteria {
     WINS = 'wins',
@@ -13,12 +14,14 @@ export default function Leaderboard() {
     const [criteria, setCriteria] = useState<Criteria>(Criteria.WINS)
     const [players, setPlayers] = useState<any>({})
     const [sortedIds, setSortedIds] = useState<string[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const handleChange = (e: any) => {
         setCriteria(e.target.value)
     }
 
     const getPlayers = async (criteria: Criteria) => {
+        setIsLoading(true)
         const playerq = query(collection(db, "players"));
         const playerQuerySnapshot = await getDocs(playerq);
         const updatedplayers: any = {};
@@ -60,6 +63,7 @@ export default function Leaderboard() {
         const keysSorted = Object.keys(updatedplayers).sort(function (a, b) { return updatedplayers[b][criteria] - updatedplayers[a][criteria] })
         setSortedIds(keysSorted)
         setPlayers(updatedplayers)
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -80,25 +84,28 @@ export default function Leaderboard() {
                 <MenuItem value="sets">sets</MenuItem>
                 <MenuItem value="ratio">ratio</MenuItem>
             </Select>
-            {players && sortedIds.map((playerid) => (
-                <Box key={playerid} className="ArrayContainer">
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        {players[playerid]?.name}
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        wins: {players[playerid]?.wins}
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        matches: {players[playerid]?.matches}
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        sets: {players[playerid]?.sets}
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        ratio: {players[playerid]?.ratio}
-                    </Typography>
-                </Box>
-            ))}
+            {isLoading
+                ? <CircularProgress color="success" />
+                : players && sortedIds.map((playerid) => (
+                    <Box key={playerid} className="ArrayContainer">
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            {players[playerid]?.name}
+                        </Typography>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            wins: {players[playerid]?.wins}
+                        </Typography>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            matches: {players[playerid]?.matches}
+                        </Typography>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            sets: {players[playerid]?.sets}
+                        </Typography>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            ratio: {players[playerid]?.ratio}
+                        </Typography>
+                    </Box>
+                ))
+            }
         </Box>
     )
 }

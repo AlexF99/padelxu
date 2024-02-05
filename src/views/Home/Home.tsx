@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from '@mui/material'
 import { collection, query, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ const Home = () => {
     const [matches, setMatches] = useState<any[]>([]);
     const [open, setOpen] = useState(false);
     const [matchDelete, setMatchDelete] = useState("");
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);
@@ -20,6 +21,7 @@ const Home = () => {
     };
 
     const getMatches = async () => {
+        setIsLoading(true);
         const q = query(collection(db, "matches"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
         const updatedMatches: any = []
@@ -27,6 +29,7 @@ const Home = () => {
             updatedMatches.push({ id: doc.id, ...doc.data() })
         });
         setMatches(updatedMatches)
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -60,29 +63,31 @@ const Home = () => {
             <Button variant='contained'>
                 <Link style={{ color: "#fff", textDecoration: "none" }} to={"/newmatch"}>Nova Partida</Link>
             </Button>
-            {matches.map((item) => (
-                <Box key={item.id} className="ArrayContainer">
-                    <Grid container spacing={2}>
-                        <Grid item xs={5}>
-                            <h3>Time 1</h3>
-                            <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[0].name}</Typography>
-                            <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[1].name}</Typography>
-                            <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.points}</Typography>
+            {isLoading
+                ? <CircularProgress color="success" />
+                : matches.map((item) => (
+                    <Box key={item.id} className="ArrayContainer">
+                        <Grid container spacing={2}>
+                            <Grid item xs={5}>
+                                <h3>Time 1</h3>
+                                <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[0].name}</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[1].name}</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.points}</Typography>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <h3>Time 2</h3>
+                                <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[0].name}</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[1].name}</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.points}</Typography>
+                            </Grid>
+                            <Grid item xs={2} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
+                                    <CloseIcon />
+                                </Fab>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={5}>
-                            <h3>Time 2</h3>
-                            <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[0].name}</Typography>
-                            <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[1].name}</Typography>
-                            <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.points}</Typography>
-                        </Grid>
-                        <Grid item xs={2} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
-                                <CloseIcon />
-                            </Fab>
-                        </Grid>
-                    </Grid>
-                </Box>
-            ))}
+                    </Box>
+                ))}
         </Box>
     )
 }

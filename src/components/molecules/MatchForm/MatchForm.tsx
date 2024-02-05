@@ -1,4 +1,4 @@
-import { Box, Button, Fab, Grid, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Fab, Grid, Typography } from "@mui/material";
 import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useEffect, useState } from "react";
@@ -11,16 +11,20 @@ export default function MatchForm() {
     const [teamOne, setTeamOne] = useState<any>([])
     const [teamTwo, setTeamTwo] = useState<any>([])
     const [points, setPoints] = useState<{ 0: number, 1: number }>({ 0: 0, 1: 0 })
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+
     const navigate = useNavigate();
 
     const getPlayers = async () => {
+        setIsLoading(true);
         const q = query(collection(db, "players"));
         const querySnapshot = await getDocs(q);
         const updatedplayers: any = []
         querySnapshot.forEach((doc) => {
             updatedplayers.push({ id: doc.id, name: doc.data().name })
         });
-        setAllPlayers(updatedplayers)
+        setAllPlayers(updatedplayers);
+        setIsLoading(false);
     }
 
     const addToTeam = (teamNumber: number, player: any) => {
@@ -63,80 +67,85 @@ export default function MatchForm() {
     }
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <h3>time 1</h3>
-            </Grid>
-            <Grid item xs={6}>
-                {teamOne.length < 2 ? allPlayers.map((player) => (
-                    <Box onClick={() => addToTeam(0, player)} key={player.id} className="ArrayContainer">
-                        <span>
-                            {player.name}
-                        </span>
-                    </Box>
-                )) :
-                    <Box>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <Fab size="small" color="secondary" aria-label="minus"
-                                onClick={() => { points[0] > 0 ? setPoints({ ...points, 0: points[0] - 1 }) : setPoints(points) }}>
-                                <RemoveIcon />
-                            </Fab>
-                            <Typography variant="subtitle1">{points[0]}</Typography>
-                            <Fab size="small" color="secondary" aria-label="add"
-                                onClick={() => { setPoints({ ...points, 0: points[0] + 1 }) }}>
-                                <AddIcon />
-                            </Fab>
-                        </div>
-                    </Box>
-                }
-            </Grid>
-            <Grid item xs={6}>
-                {!!teamOne && teamOne.map((player: any) => (
-                    <Box onClick={() => removeFromTeam(0, player)} key={player.id} className="ArrayContainer">
-                        <span>
-                            {player.name}
-                        </span>
-                    </Box>
-                ))}
-            </Grid>
-            <Grid item xs={12}>
-                <h3>time 2</h3>
-            </Grid>
-            <Grid item xs={6}>
-                {teamTwo.length < 2 ? allPlayers.map((player) => (
-                    <Box onClick={() => addToTeam(1, player)} key={player.id} className="ArrayContainer">
-                        <span>
-                            {player.name}
-                        </span>
-                    </Box>
-                )) :
-                    <Box>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <Fab size="small" color="secondary" aria-label="minus"
-                                onClick={() => { points[1] > 0 ? setPoints({ ...points, 1: points[1] - 1 }) : setPoints(points) }}>
-                                <RemoveIcon />
-                            </Fab>
-                            <Typography variant="subtitle1">{points[1]}</Typography>
-                            <Fab size="small" color="secondary" aria-label="add"
-                                onClick={() => { setPoints({ ...points, 1: points[1] + 1 }) }}>
-                                <AddIcon />
-                            </Fab>
-                        </div>
-                    </Box>
-                }
-            </Grid>
-            <Grid item xs={6}>
-                {!!teamTwo && teamTwo.map((player: any) => (
-                    <Box onClick={() => removeFromTeam(1, player)} key={player.id} className="ArrayContainer">
-                        <span>
-                            {player.name}
-                        </span>
-                    </Box>
-                ))}
-            </Grid>
-            <Grid item xs={12}>
-                <Button variant="contained" onClick={saveMatch}>Save</Button>
-            </Grid>
-        </Grid>
+        <Box>
+            {isLoading
+                ? <CircularProgress color="success" />
+                : <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <h3>Time 1</h3>
+                    </Grid>
+                    <Grid item xs={6}>
+                        {teamOne.length < 2 ? allPlayers.map((player) => (
+                            <Box onClick={() => addToTeam(0, player)} key={player.id} className="ArrayContainer">
+                                <span>
+                                    {player.name}
+                                </span>
+                            </Box>
+                        )) :
+                            <Box>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <Fab size="small" color="secondary" aria-label="minus"
+                                        onClick={() => { points[0] > 0 ? setPoints({ ...points, 0: points[0] - 1 }) : setPoints(points) }}>
+                                        <RemoveIcon />
+                                    </Fab>
+                                    <Typography variant="subtitle1">{points[0]}</Typography>
+                                    <Fab size="small" color="secondary" aria-label="add"
+                                        onClick={() => { setPoints({ ...points, 0: points[0] + 1 }) }}>
+                                        <AddIcon />
+                                    </Fab>
+                                </div>
+                            </Box>
+                        }
+                    </Grid>
+                    <Grid item xs={6}>
+                        {!!teamOne && teamOne.map((player: any) => (
+                            <Box onClick={() => removeFromTeam(0, player)} key={player.id} className="ArrayContainer">
+                                <span>
+                                    {player.name}
+                                </span>
+                            </Box>
+                        ))}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <h3>Time 2</h3>
+                    </Grid>
+                    <Grid item xs={6}>
+                        {teamTwo.length < 2 ? allPlayers.map((player) => (
+                            <Box onClick={() => addToTeam(1, player)} key={player.id} className="ArrayContainer">
+                                <span>
+                                    {player.name}
+                                </span>
+                            </Box>
+                        )) :
+                            <Box>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <Fab size="small" color="secondary" aria-label="minus"
+                                        onClick={() => { points[1] > 0 ? setPoints({ ...points, 1: points[1] - 1 }) : setPoints(points) }}>
+                                        <RemoveIcon />
+                                    </Fab>
+                                    <Typography variant="subtitle1">{points[1]}</Typography>
+                                    <Fab size="small" color="secondary" aria-label="add"
+                                        onClick={() => { setPoints({ ...points, 1: points[1] + 1 }) }}>
+                                        <AddIcon />
+                                    </Fab>
+                                </div>
+                            </Box>
+                        }
+                    </Grid>
+                    <Grid item xs={6}>
+                        {!!teamTwo && teamTwo.map((player: any) => (
+                            <Box onClick={() => removeFromTeam(1, player)} key={player.id} className="ArrayContainer">
+                                <span>
+                                    {player.name}
+                                </span>
+                            </Box>
+                        ))}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button variant="contained" onClick={saveMatch}>Save</Button>
+                    </Grid>
+                </Grid>
+            }
+        </Box>
     )
 }

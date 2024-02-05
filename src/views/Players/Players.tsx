@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from "@mui/material";
 import PlayerForm from "../../components/molecules/PlayerForm/PlayerForm";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
@@ -10,8 +10,10 @@ const Players = () => {
     const [players, setPlayers] = useState<any[]>([]);
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const getPlayers = async () => {
+        setIsLoading(true);
         const q = query(collection(db, "players"));
         const querySnapshot = await getDocs(q);
         const updatedplayers: any = []
@@ -19,6 +21,7 @@ const Players = () => {
             updatedplayers.push({ id: doc.id, name: doc.data().name })
         });
         setPlayers(updatedplayers)
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -59,23 +62,25 @@ const Players = () => {
                 </DialogActions>
             </Dialog>
             <PlayerForm updatePlayers={getPlayers} />
-            {(players && players.length) && players.map((item) => (
-                <Box key={item.id} className="ArrayContainer">
-                    <Grid container spacing={2}>
-                        <Grid item xs={9}>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                                {item.name}
-                            </Typography>
+            {isLoading
+                ? <CircularProgress color="success" />
+                : players && players.map((item) => (
+                    <Box key={item.id} className="ArrayContainer">
+                        <Grid container spacing={2}>
+                            <Grid item xs={9}>
+                                <Typography variant="subtitle1" fontWeight="bold">
+                                    {item.name}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
+                                    <CloseIcon />
+                                </Fab>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={3}>
-                            <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
-                                <CloseIcon />
-                            </Fab>
-                        </Grid>
-                    </Grid>
 
-                </Box>
-            ))}
+                    </Box>
+                ))}
         </Box>
     )
 }
