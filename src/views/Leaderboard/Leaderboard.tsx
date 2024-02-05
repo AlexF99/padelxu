@@ -1,107 +1,65 @@
-import { Box, MenuItem, Select, Typography } from "@mui/material";
-import { collection, getDocs, query } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { db } from "../../firebase";
+import { Box, Button, MenuItem, Select, Typography } from "@mui/material";
+import { useEffect } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
-
-enum Criteria {
-    WINS = 'wins',
-    SETS = 'sets',
-    RATIO = 'ratio',
-}
+import { useStore } from "../../zustand/store";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function Leaderboard() {
-    const [criteria, setCriteria] = useState<Criteria>(Criteria.WINS)
-    const [players, setPlayers] = useState<any>({})
-    const [sortedIds, setSortedIds] = useState<string[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const { criteria, leaderboard, leaderboardKeys, fetchLeaderboard, setCriteria, isLoading, setIsLoading } = useStore();
 
-    const handleChange = (e: any) => {
-        setCriteria(e.target.value)
-    }
-
-    const getPlayers = async (criteria: Criteria) => {
+    const updateLeaderboard = async () => {
         setIsLoading(true)
-        const playerq = query(collection(db, "players"));
-        const playerQuerySnapshot = await getDocs(playerq);
-        const updatedplayers: any = {};
-        playerQuerySnapshot.forEach((doc) => {
-            updatedplayers[doc.id] = { name: doc.data().name, wins: 0, sets: 0, matches: 0 }
-        });
-
-        const matchq = query(collection(db, "matches"));
-        const matchQuerySnapshot = await getDocs(matchq);
-        matchQuerySnapshot.forEach((doc) => {
-            const match = doc.data();
-            match.teamOne.players.forEach((player: any) => {
-                if (updatedplayers[player.id]) {
-                    updatedplayers[player.id] = {
-                        ...updatedplayers[player.id],
-                        sets: updatedplayers[player.id].sets + match.teamOne.points,
-                        wins: updatedplayers[player.id].wins + (match.teamOne.points > match.teamTwo.points ? 1 : 0),
-                        matches: updatedplayers[player.id].matches + 1
-                    }
-                }
-            });
-            match.teamTwo.players.forEach((player: any) => {
-                if (updatedplayers[player.id]) {
-                    updatedplayers[player.id] = {
-                        ...updatedplayers[player.id],
-                        sets: updatedplayers[player.id].sets + match.teamTwo.points,
-                        wins: updatedplayers[player.id].wins + (match.teamTwo.points > match.teamOne.points ? 1 : 0),
-                        matches: updatedplayers[player.id].matches + 1
-                    }
-                }
-            });
-        });
-
-        Object.keys(updatedplayers).forEach(key => updatedplayers[key] = {
-            ...updatedplayers[key],
-            ratio: updatedplayers[key].matches > 0 ? (updatedplayers[key].wins / updatedplayers[key].matches).toFixed(2) : 0
-        })
-
-        const keysSorted = Object.keys(updatedplayers).sort(function (a, b) { return updatedplayers[b][criteria] - updatedplayers[a][criteria] })
-        setSortedIds(keysSorted)
-        setPlayers(updatedplayers)
+        await fetchLeaderboard()
         setIsLoading(false)
     }
 
-    useEffect(() => {
-        getPlayers(criteria);
-    }, [criteria])
+    const handleCriteriaChange = async (e: any) => {
+        if (Object.keys(leaderboard).length < 1) {
+            await updateLeaderboard()
+        }
+        setCriteria(e.target.value);
+    }
 
+    useEffect(() => {
+        if (Object.keys(leaderboard).length < 1) {
+            updateLeaderboard()
+        }
+    }, [])
 
     return (
         <Box className="PageContainer">
-            <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={criteria}
-                label="Age"
-                onChange={handleChange}
-            >
-                <MenuItem value="wins">wins</MenuItem>
-                <MenuItem value="sets">sets</MenuItem>
-                <MenuItem value="ratio">ratio</MenuItem>
-            </Select>
+            <div style={{ display: "flex" }}>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={criteria}
+                    label="Age"
+                    onChange={handleCriteriaChange}
+                >
+                    <MenuItem value="wins">wins</MenuItem>
+                    <MenuItem value="sets">sets</MenuItem>
+                    <MenuItem value="ratio">ratio</MenuItem>
+                </Select>
+                <Button type="button" color='success' onClick={() => updateLeaderboard()}><RefreshIcon /></Button>
+            </div>
             {isLoading
                 ? <CircularProgress color="success" />
-                : players && sortedIds.map((playerid) => (
+                : leaderboardKeys.length && leaderboardKeys.map((playerid: string) => (
                     <Box key={playerid} className="ArrayContainer">
                         <Typography variant="subtitle1" fontWeight="bold">
-                            {players[playerid]?.name}
+                            {leaderboard[playerid]?.name}
                         </Typography>
                         <Typography variant="subtitle1" fontWeight="bold">
-                            wins: {players[playerid]?.wins}
+                            wins: {leaderboard[playerid]?.wins}
                         </Typography>
                         <Typography variant="subtitle1" fontWeight="bold">
-                            matches: {players[playerid]?.matches}
+                            matches: {leaderboard[playerid]?.matches}
                         </Typography>
                         <Typography variant="subtitle1" fontWeight="bold">
-                            sets: {players[playerid]?.sets}
+                            sets: {leaderboard[playerid]?.sets}
                         </Typography>
                         <Typography variant="subtitle1" fontWeight="bold">
-                            ratio: {players[playerid]?.ratio}
+                            ratio: {leaderboard[playerid]?.ratio}
                         </Typography>
                     </Box>
                 ))
