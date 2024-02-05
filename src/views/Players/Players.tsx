@@ -2,30 +2,25 @@ import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Fab,
 import PlayerForm from "../../components/molecules/PlayerForm/PlayerForm";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
-import { collection, deleteDoc, doc, getDocs, query } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
+import { useStore } from "../../zustand/store";
 
 
 const Players = () => {
-    const [players, setPlayers] = useState<any[]>([]);
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const { players, fetchPlayers, isLoading, setIsLoading } = useStore();
 
-    const getPlayers = async () => {
+    const updatePlayers = async () => {
         setIsLoading(true);
-        const q = query(collection(db, "players"));
-        const querySnapshot = await getDocs(q);
-        const updatedplayers: any = []
-        querySnapshot.forEach((doc) => {
-            updatedplayers.push({ id: doc.id, name: doc.data().name })
-        });
-        setPlayers(updatedplayers)
+        await fetchPlayers();
         setIsLoading(false);
     }
 
     useEffect(() => {
-        getPlayers();
+        if (players.length < 1)
+            updatePlayers();
     }, [])
 
     const handleClickOpen = (matchId: string) => {
@@ -39,7 +34,7 @@ const Players = () => {
 
     const handleAgree = async () => {
         await deleteDoc(doc(db, "players", playerDelete));
-        await getPlayers();
+        await updatePlayers();
         handleClose();
     }
 
@@ -61,10 +56,10 @@ const Players = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <PlayerForm updatePlayers={getPlayers} />
+            <PlayerForm updatePlayers={updatePlayers} />
             {isLoading
                 ? <CircularProgress color="success" />
-                : players && players.map((item) => (
+                : players && players.map((item: any) => (
                     <Box key={item.id} className="ArrayContainer">
                         <Grid container spacing={2}>
                             <Grid item xs={9}>

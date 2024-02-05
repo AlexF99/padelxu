@@ -2,6 +2,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 type Inputs = {
     name: string
@@ -22,7 +23,7 @@ export default function PlayerForm(props: any) {
         const { name } = data;
         if (name.length < 1) return;
         await addDoc(collection(db, "players"), { name });
-        updatePlayers();
+        await updatePlayers();
         reset();
     }
 
@@ -33,8 +34,10 @@ export default function PlayerForm(props: any) {
                     <TextField id="outlined-basic" label="Nome" variant="outlined" {...register("name", { required: true })} />
                     <Typography>{errors.name && <span>Campo obrigatório</span>}</Typography>
                 </div>
-
-                <Button type="submit" variant="contained">add</Button>
+                <div style={{ display: "flex" }}>
+                    <Button type="submit" variant="contained">add</Button>
+                    <Button type="button" onClick={updatePlayers} color="success"><RefreshIcon /></Button>
+                </div>
             </form>
         </Box>
     )

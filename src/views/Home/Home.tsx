@@ -1,15 +1,17 @@
 import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from '@mui/material'
-import { collection, query, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import { useStore } from '../../zustand/store';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const Home = () => {
-    const [matches, setMatches] = useState<any[]>([]);
     const [open, setOpen] = useState(false);
     const [matchDelete, setMatchDelete] = useState("");
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+
+    const { matches, fetchMatches, isLoading, setIsLoading } = useStore();
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);
@@ -22,18 +24,13 @@ const Home = () => {
 
     const getMatches = async () => {
         setIsLoading(true);
-        const q = query(collection(db, "matches"), orderBy("date", "desc"));
-        const querySnapshot = await getDocs(q);
-        const updatedMatches: any = []
-        querySnapshot.forEach((doc) => {
-            updatedMatches.push({ id: doc.id, ...doc.data() })
-        });
-        setMatches(updatedMatches)
+        await fetchMatches();
         setIsLoading(false);
     }
 
     useEffect(() => {
-        getMatches();
+        if (matches.length < 1)
+            getMatches();
     }, [])
 
     const handleAgree = async () => {
@@ -60,12 +57,15 @@ const Home = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Button variant='contained'>
-                <Link style={{ color: "#fff", textDecoration: "none" }} to={"/newmatch"}>Nova Partida</Link>
-            </Button>
+            <div>
+                <Button variant='contained'>
+                    <Link style={{ color: "#fff", textDecoration: "none" }} to={"/newmatch"}>Nova Partida</Link>
+                </Button>
+                <Button type="button" color='success' onClick={getMatches}><RefreshIcon /></Button>
+            </div>
             {isLoading
                 ? <CircularProgress color="success" />
-                : matches.map((item) => (
+                : matches.map((item: any) => (
                     <Box key={item.id} className="ArrayContainer">
                         <Grid container spacing={2}>
                             <Grid item xs={5}>
