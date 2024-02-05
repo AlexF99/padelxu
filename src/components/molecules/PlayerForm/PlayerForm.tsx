@@ -33,7 +33,7 @@ export default function PlayerForm() {
         <Box>
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
-                    <TextField id="outlined-basic" label="Nome" variant="outlined" {...register("name", { required: true })} />
+                    <TextField id="outlined-basic" color="primary" label="Nome" variant="filled" sx={{ backgroundColor: "#878787" }} {...register("name", { required: true })} />
                     <Typography>{errors.name && <span>Campo obrigatório</span>}</Typography>
                 </div>
                 <div style={{ display: "flex" }}>
