@@ -37,21 +37,21 @@ const Login = () => {
 
     return (
         <Box className="PageContainer">
-            <form onSubmit={handleSubmit(signin)} >
+            <form onSubmit={handleSubmit(signin)} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                 <TextField
                     id="email"
                     color="primary"
                     label="e-mail"
                     variant="filled"
-                    sx={{ backgroundColor: "#878787" }}
+                    sx={{ backgroundColor: "#878787", marginBottom: "10px" }}
                     {...register("email", { required: true })} />
                 <TextField
-                type="password"
+                    type="password"
                     id="password"
                     color="primary"
                     label="senha"
                     variant="filled"
-                    sx={{ backgroundColor: "#878787" }}
+                    sx={{ backgroundColor: "#878787", marginBottom: "10px" }}
                     {...register("password", { required: true })} />
                 <Button type="submit" variant="contained" color="primary">login</Button>
             </form>
