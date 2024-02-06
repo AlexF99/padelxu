@@ -4,19 +4,27 @@ import { persist } from 'zustand/middleware'
 type AuthState = {
     loggedUser: {},
     isLoggedIn: boolean,
+}
+
+type AuthActions = {
     setLoggedUser: ({ }) => void
     signUserOut: () => void
 }
 
-export const useAuthStore = create<AuthState>()(
+const initialState = {
+    loggedUser: {} as any,
+    isLoggedIn: false,
+}
+
+export const useAuthStore = create<AuthState & AuthActions>()(
     persist(
         (set, get) => ({
-            loggedUser: {},
+            loggedUser: {} as any,
             isLoggedIn: false,
-            setLoggedUser: (loggedUser: {}) => {
+            setLoggedUser: (loggedUser) => {
                 set((state: any) => ({ ...state, loggedUser, isLoggedIn: true }));
             },
-            signUserOut: () => { set((state: any) => ({ ...state, loggedUser: {}, isLoggedIn: false })) }
+            signUserOut: () => { set(initialState) }
         }),
         {
             name: 'auth-storage', // name of the item in the storage (must be unique)
