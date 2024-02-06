@@ -5,12 +5,14 @@ import { db } from "../../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from "../../zustand/padelStore";
+import { useAuthStore } from "../../zustand/authStore";
 
 
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
     const { players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
+    const { isLoggedIn } = useAuthStore();
 
     const updatePlayers = async () => {
         setIsLoading(true);
@@ -57,7 +59,7 @@ const Players = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <PlayerForm />
+            {isLoggedIn && <PlayerForm />}
             {isLoading
                 ? <CircularProgress color="success" />
                 : players && players.map((item: any) => (
@@ -69,9 +71,11 @@ const Players = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
-                                    <CloseIcon />
-                                </Fab>
+                                {isLoggedIn &&
+                                    <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
+                                        <CloseIcon />
+                                    </Fab>
+                                }
                             </Grid>
                         </Grid>
 
