@@ -39,7 +39,7 @@ const Login = () => {
         <Box className="PageContainer">
             <form onSubmit={handleSubmit(signin)} >
                 <TextField
-                    id="outlined-basic"
+                    id="email"
                     color="primary"
                     label="e-mail"
                     variant="filled"
@@ -47,7 +47,7 @@ const Login = () => {
                     {...register("email", { required: true })} />
                 <TextField
                 type="password"
-                    id="outlined-basic"
+                    id="password"
                     color="primary"
                     label="senha"
                     variant="filled"

@@ -12,6 +12,7 @@ type AuthActions = {
 }
 
 const initialState = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-pattern
     loggedUser: {} as any,
     isLoggedIn: false,
 }
@@ -19,12 +20,11 @@ const initialState = {
 export const useAuthStore = create<AuthState & AuthActions>()(
     persist(
         (set, get) => ({
-            loggedUser: {} as any,
-            isLoggedIn: false,
+            ...initialState,
             setLoggedUser: (loggedUser) => {
                 set((state: any) => ({ ...state, loggedUser, isLoggedIn: true }));
             },
-            signUserOut: () => { set(initialState) }
+            signUserOut: () => { set((state) => ({ ...state, ...initialState })); }
         }),
         {
             name: 'auth-storage', // name of the item in the storage (must be unique)
