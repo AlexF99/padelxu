@@ -9,7 +9,7 @@ export enum Criteria {
     RATIO = 'ratio',
 }
 
-export const useStore = create(
+export const usePadelStore = create(
     combine({
         players: [],
         matches: [],

@@ -3,14 +3,14 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useStore } from "../../../zustand/store";
+import { usePadelStore } from "../../../zustand/padelStore";
 
 type Inputs = {
     name: string
 }
 
 export default function PlayerForm() {
-    const { fetchLeaderboard, fetchPlayers } = useStore();
+    const { fetchLeaderboard, fetchPlayers } = usePadelStore();
 
     const {
         register,

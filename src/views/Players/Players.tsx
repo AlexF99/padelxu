@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
-import { useStore } from "../../zustand/store";
+import { usePadelStore } from "../../zustand/padelStore";
 
 
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const { players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = useStore();
+    const { players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
 
     const updatePlayers = async () => {
         setIsLoading(true);

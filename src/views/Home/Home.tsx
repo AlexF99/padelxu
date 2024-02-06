@@ -4,14 +4,14 @@ import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import { useStore } from '../../zustand/store';
+import { usePadelStore } from '../../zustand/padelStore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 const Home = () => {
     const [open, setOpen] = useState(false);
     const [matchDelete, setMatchDelete] = useState("");
 
-    const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard } = useStore();
+    const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);

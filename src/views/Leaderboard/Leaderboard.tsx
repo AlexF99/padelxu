@@ -1,11 +1,11 @@
 import { Box, Button, MenuItem, Select, Typography } from "@mui/material";
 import { useEffect } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
-import { useStore } from "../../zustand/store";
+import { usePadelStore } from "../../zustand/padelStore";
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function Leaderboard() {
-    const { criteria, leaderboard, leaderboardKeys, fetchLeaderboard, setCriteria, isLoading, setIsLoading } = useStore();
+    const { criteria, leaderboard, leaderboardKeys, fetchLeaderboard, setCriteria, isLoading, setIsLoading } = usePadelStore();
 
     const updateLeaderboard = async () => {
         setIsLoading(true)

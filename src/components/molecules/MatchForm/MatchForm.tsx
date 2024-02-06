@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../../../zustand/store";
+import { usePadelStore } from "../../../zustand/padelStore";
 
 export default function MatchForm() {
     const [allPlayers, setAllPlayers] = useState<any[]>([])
@@ -14,7 +14,7 @@ export default function MatchForm() {
     const [points, setPoints] = useState<{ 0: number, 1: number }>({ 0: 0, 1: 0 })
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
-    const { fetchMatches, fetchLeaderboard } = useStore();
+    const { fetchMatches, fetchLeaderboard } = usePadelStore();
 
     const navigate = useNavigate();
 
