@@ -7,6 +7,9 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 
 import AvatarProps from '../../../types/AvatarProps'
+import { useAuthStore } from '../../../zustand/authStore'
+import { useNavigate } from 'react-router-dom'
+import { Route } from '../../../router'
 
 const UserAvatar = (props: AvatarProps) => {
     const {
@@ -18,10 +21,13 @@ const UserAvatar = (props: AvatarProps) => {
         anchorElUser,
     } = props
 
+    const { isLoggedIn } = useAuthStore();
+    const navigate = useNavigate();
+
     return (
-        <Box sx={{flexGrow: 0}}>
+        <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                         alt={avatarImageAlt || 'user-avatar'}
                         src={avatarImage || ''}
@@ -29,7 +35,7 @@ const UserAvatar = (props: AvatarProps) => {
                 </IconButton>
             </Tooltip>
             <Menu
-                sx={{mt: '45px'}}
+                sx={{ mt: '45px' }}
                 id="menu-appbar"
                 anchorEl={anchorElUser}
                 anchorOrigin={{
@@ -44,9 +50,14 @@ const UserAvatar = (props: AvatarProps) => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
             >
-                <MenuItem onClick={handleSignOut}>
-                    <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
+                {isLoggedIn
+                    ? <MenuItem onClick={handleSignOut}>
+                        <Typography textAlign="center">Logout</Typography>
+                    </MenuItem>
+                    : <MenuItem onClick={() => navigate(Route.LOGIN)}>
+                        <Typography textAlign="center">Login</Typography>
+                    </MenuItem>
+                }
             </Menu>
         </Box>
     )
