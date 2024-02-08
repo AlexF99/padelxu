@@ -44,7 +44,7 @@ const incrementStats = (object: any, index: string, mypoints: number, theirpoint
 export const usePadelStore = create(
     combine({
         players: [],
-        matches: [],
+        matches: {} as any,
         leaderboard: {} as any,
         leaderboardKeys: [] as any,
         teams: {} as Teams,
@@ -70,9 +70,11 @@ export const usePadelStore = create(
             const querySnapshot = await getDocs(q);
             const updatedMatches: any = []
             querySnapshot.forEach((doc) => {
-                updatedMatches.push({ id: doc.id, ...doc.data() })
+                const date = doc.data().date;
+                updatedMatches.push({ ...doc.data(), id: doc.id, date: date.toDate().toDateString() })
             });
-            set((state) => ({ ...state, matches: updatedMatches }));
+            const grouped = _.groupBy(updatedMatches, 'date')
+            set((state) => ({ ...state, matches: grouped }));
         },
         fetchLeaderboard: async () => {
             const playerq = query(collection(db, "players"));
