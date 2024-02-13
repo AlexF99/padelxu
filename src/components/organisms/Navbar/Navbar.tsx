@@ -5,6 +5,9 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
+import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 
 import { Route } from '../../../router'
 
@@ -13,11 +16,17 @@ import { useState } from 'react'
 import UserAvatar from '../../molecules/UserAvatar/UserAvatar'
 import { getAuth, signOut } from "firebase/auth";
 import { useAuthStore } from '../../../zustand/authStore'
+import { Modal } from '@mui/material'
+import GroupsModal from '../GroupsModal/GroupsModal'
 
 const Navbar = () => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
     const navigate = useNavigate()
     const { signUserOut } = useAuthStore();
+
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
 
     const handleSignOut = () => {
@@ -67,10 +76,11 @@ const Navbar = () => {
                         </Typography>
                     </Box>
 
-                    <RocketLaunchIcon
+                    <SportsBaseballIcon
                         sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
                         onClick={() => navigate(Route.HOME)}
                     />
+
                     <Typography
                         variant="h5"
                         noWrap
@@ -86,8 +96,34 @@ const Navbar = () => {
                             textDecoration: 'none',
                         }}
                     >
-                        Xupadel
+                        xp
                     </Typography>
+
+                    <Typography
+                        variant="h5"
+                        noWrap
+                        onClick={handleOpen}
+                        sx={{
+                            mr: 2,
+                            fontFamily: 'monospace',
+                            cursor: "pointer",
+                            display: "flex"
+                        }}
+                    >
+                        <ExpandMoreIcon />
+                        Grupos
+                    </Typography>
+
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <>
+                            <GroupsModal />
+                        </>
+                    </Modal>
 
                     <UserAvatar
                         avatarImageAlt="user-avatar"
