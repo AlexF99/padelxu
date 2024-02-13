@@ -26,7 +26,7 @@ const UserAvatar = (props: AvatarProps) => {
 
     return (
         <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Log in or out">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                         alt={avatarImageAlt || 'user-avatar'}
