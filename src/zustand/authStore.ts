@@ -1,19 +1,20 @@
+import { User } from 'firebase/auth'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type AuthState = {
-    loggedUser: {},
+    loggedUser: User,
     isLoggedIn: boolean,
 }
 
 type AuthActions = {
     // eslint-disable-next-line
-    setLoggedUser: ({ }) => void
+    setLoggedUser: ({ }: User) => void
     signUserOut: () => void
 }
 
 const initialState = {
-    loggedUser: {} as any,
+    loggedUser: {} as User,
     isLoggedIn: false,
 }
 
@@ -21,7 +22,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
     persist(
         (set, get) => ({
             ...initialState,
-            setLoggedUser: (loggedUser) => {
+            setLoggedUser: (loggedUser: User) => {
                 set((state: any) => ({ ...state, loggedUser, isLoggedIn: true }));
             },
             signUserOut: () => { set(initialState); }

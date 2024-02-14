@@ -9,6 +9,7 @@ import Leaderboard from '../views/Leaderboard/Leaderboard'
 import Login from '../views/Login/Login'
 import Matches from '../views/Matches/Matches'
 import Teams from '../views/Teams/Teams'
+import Profile from '../views/Profile/Profile'
 
 enum Route {
     ROOT = '/',
@@ -18,6 +19,7 @@ enum Route {
     LOGIN = '/login',
     FAVORITES = '/favorites',
     PLAYERS = '/players',
+    PROFILE = '/profile',
     NEW_MATCH = '/newmatch',
     LEADERBOARD = '/leaderboard',
     NOTFOUND = '*',
@@ -43,6 +45,10 @@ const publicRoutes = [
     {
         path: Route.PLAYERS,
         element: <Players />,
+    },
+    {
+        path: Route.PROFILE,
+        element: <Profile />,
     },
     {
         path: Route.NEW_MATCH,

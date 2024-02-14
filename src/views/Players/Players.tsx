@@ -6,6 +6,8 @@ import { deleteDoc, doc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from "../../zustand/padelStore";
 import { useAuthStore } from "../../zustand/authStore";
+import { Link } from "react-router-dom";
+import { Route } from "../../router";
 
 
 const Players = () => {
@@ -59,7 +61,12 @@ const Players = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {isLoggedIn && <PlayerForm />}
+            {isLoggedIn ? <PlayerForm /> : <div>
+                <Button variant='contained' style={{ marginRight: "5px" }}>
+                    <Link style={{ color: "#fff", textDecoration: "none" }} to={Route.LOGIN}>Login</Link>
+                </Button>
+                para adicionar jogadores
+            </div>}
             {isLoading
                 ? <CircularProgress color="success" />
                 : players && players.map((item: any) => (

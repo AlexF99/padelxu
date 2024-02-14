@@ -5,6 +5,7 @@ import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import { Route } from '../../router';
+import GlobalAddAction from '../../components/molecules/GlobalAddAction/GlobalAddAction';
 
 const Home = () => {
 
@@ -27,7 +28,7 @@ const Home = () => {
                     </Grid>
                 ))}
             </Grid>
-
+            <GlobalAddAction />
         </Box>
     )
 }

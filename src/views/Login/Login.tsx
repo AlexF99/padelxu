@@ -1,4 +1,4 @@
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { User, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useAuthStore } from "../../zustand/authStore";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Box, Button, TextField } from "@mui/material";
@@ -24,7 +24,7 @@ const Login = () => {
 
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const user = userCredential.user;
+                const user: User = userCredential.user;
                 setLoggedUser(user)
                 navigate(Route.HOME, { replace: true })
             })
