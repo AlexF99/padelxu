@@ -2,9 +2,11 @@ import { Box, Typography } from "@mui/material"
 import { usePadelStore } from "../../../zustand/padelStore";
 import GroupForm from "../../molecules/GroupForm/GroupForm";
 import { useEffect } from "react";
+import { useAuthStore } from "../../../zustand/authStore";
 
 const GroupsModal = () => {
     const { group, groups, fetchGroups, setGroup } = usePadelStore();
+    const { isLoggedIn } = useAuthStore();
 
     useEffect(() => {
         if (groups.length < 1)
@@ -27,7 +29,7 @@ const GroupsModal = () => {
             }}>
             <Typography id="modal-modal-title" variant="h5" component="h2">
                 Grupos
-                <GroupForm />
+                {isLoggedIn && <GroupForm />}
             </Typography>
             {group.id.length < 1 &&
                 <Typography id="modal-modal-title" variant="subtitle2">
