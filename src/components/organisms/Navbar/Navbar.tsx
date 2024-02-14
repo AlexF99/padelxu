@@ -126,7 +126,7 @@ const Navbar = () => {
                         aria-describedby="modal-modal-description"
                     >
                         <>
-                            <GroupsModal />
+                            <GroupsModal onClose={handleClose}/>
                         </>
                     </Modal>
 

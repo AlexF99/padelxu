@@ -1,17 +1,28 @@
 import { Box, Typography } from "@mui/material"
-import { usePadelStore } from "../../../zustand/padelStore";
+import { Group, usePadelStore } from "../../../zustand/padelStore";
 import GroupForm from "../../molecules/GroupForm/GroupForm";
 import { useEffect } from "react";
 import { useAuthStore } from "../../../zustand/authStore";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const GroupsModal = () => {
-    const { group, groups, fetchGroups, setGroup } = usePadelStore();
+const GroupsModal = (props: any) => {
+    const { onClose } = props;
+    const { group, groups, fetchGroups, setGroup, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams } = usePadelStore();
     const { isLoggedIn } = useAuthStore();
 
     useEffect(() => {
         if (groups.length < 1)
             fetchGroups()
     }, [])
+
+    const onChangeGroup = (group: Group) => {
+        setGroup(group);
+        fetchLeaderboard();
+        fetchMatches();
+        fetchPlayers();
+        fetchTeams();
+        onClose();
+    }
 
     return (
         <Box
@@ -36,9 +47,10 @@ const GroupsModal = () => {
                     Selecione um grupo
                 </Typography>
             }
-            {groups && groups.map(g => (
-                <Box key={g.id} className="ArrayContainer" onClick={() => setGroup(g)} sx={{ bgcolor: group.id === g.id ? '#efefef' : "" }}>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>{g.name}</Typography>
+            {groups && groups.map((g:Group) => (
+                <Box key={g.id} className="ArrayContainer" onClick={() => onChangeGroup(g)} sx={{ bgcolor: group.id === g.id ? '#efefef' : "" }}>
+                    <Typography id="modal-modal-description">{g.name}</Typography>
+                    {group.id === g.id && <CheckCircleIcon />}
                 </Box>
             ))}
         </Box>
