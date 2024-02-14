@@ -1,5 +1,5 @@
 import { Box, Button, CircularProgress, Fab, Grid, Typography } from "@mui/material";
-import { addDoc, collection, getDocs, query } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
@@ -16,14 +16,14 @@ export default function MatchForm() {
     const [points, setPoints] = useState<{ 0: number, 1: number }>({ 0: 0, 1: 0 })
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
-    const { fetchMatches, fetchLeaderboard } = usePadelStore();
+    const { fetchMatches, fetchLeaderboard, group } = usePadelStore();
     const { isLoggedIn } = useAuthStore();
 
     const navigate = useNavigate();
 
     const getPlayers = async () => {
         setIsLoading(true);
-        const q = query(collection(db, "players"));
+        const q = query(collection(db, "players"), where("group", "==", group.id));
         const querySnapshot = await getDocs(q);
         const updatedplayers: any = []
         querySnapshot.forEach((doc) => {
@@ -61,8 +61,9 @@ export default function MatchForm() {
 
 
     const saveMatch = async () => {
-        if (teamOne.length < 2 || teamTwo.length < 2 || (points[0] === points[1])) return;
+        if (teamOne.length < 2 || teamTwo.length < 2 || (points[0] === points[1]) || group.id.length < 1) return;
         const match = {
+            group: group.id,
             teamOne: { points: points[0], players: teamOne },
             teamTwo: { points: points[1], players: teamTwo },
             date: new Date()

@@ -1,4 +1,4 @@
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { create } from 'zustand'
 import { db } from '../firebase';
 import { combine } from 'zustand/middleware'
@@ -9,6 +9,11 @@ export enum Criteria {
     SETS = 'sets',
     RATIO = 'ratio',
     MATCHES = 'matches',
+}
+
+type Group = {
+    id: string,
+    name: string
 }
 
 type Player = {
@@ -41,23 +46,30 @@ const incrementStats = (object: any, index: string, mypoints: number, theirpoint
     };
 }
 
+const initialState = {
+    groups: [] as Group[],
+    group: { id: "", name: "" } as Group,
+    players: [],
+    matches: {} as any,
+    leaderboard: {} as any,
+    leaderboardKeys: [] as any,
+    teams: {} as Teams,
+    teamKeys: [] as string[],
+    criteria: Criteria.WINS,
+    teamsCriteria: Criteria.MATCHES,
+    isLoading: false,
+}
+
 export const usePadelStore = create(
     combine({
-        players: [],
-        matches: {} as any,
-        leaderboard: {} as any,
-        leaderboardKeys: [] as any,
-        teams: {} as Teams,
-        teamKeys: [] as string[],
-        criteria: Criteria.WINS,
-        teamsCriteria: Criteria.MATCHES,
-        isLoading: false,
-    }, (set) => ({
+        ...initialState
+    }, (set, get) => ({
+        reset: () => { set(initialState) },
         setIsLoading: (value: boolean) => {
             set((state) => ({ ...state, isLoading: value }));
         },
         fetchPlayers: async () => {
-            const q = query(collection(db, "players"));
+            const q = query(collection(db, "players"), where("group", "==", get().group.id));
             const querySnapshot = await getDocs(q);
             const updatedplayers: any = []
             querySnapshot.forEach((doc) => {
@@ -65,8 +77,18 @@ export const usePadelStore = create(
             });
             set((state) => ({ ...state, players: updatedplayers }));
         },
+        fetchGroups: async () => {
+            const q = query(collection(db, "groups"));
+            const querySnapshot = await getDocs(q);
+            const updatedGroups: Group[] = []
+            querySnapshot.forEach((doc) => {
+                updatedGroups.push({ id: doc.id, name: doc.data().name })
+            });
+            set((state) => ({ ...state, groups: updatedGroups }));
+        },
+        setGroup: (group: Group) => { set((state) => ({ ...initialState, groups: state.groups, group })) },
         fetchMatches: async () => {
-            const q = query(collection(db, "matches"), orderBy("date", "desc"));
+            const q = query(collection(db, "matches"), orderBy("date", "desc"), where("group", "==", get().group.id));
             const querySnapshot = await getDocs(q);
             const updatedMatches: any = []
             querySnapshot.forEach((doc) => {
@@ -77,14 +99,14 @@ export const usePadelStore = create(
             set((state) => ({ ...state, matches: grouped }));
         },
         fetchLeaderboard: async () => {
-            const playerq = query(collection(db, "players"));
+            const playerq = query(collection(db, "players"), where("group", "==", get().group.id));
             const playerQuerySnapshot = await getDocs(playerq);
             const updatedplayers: any = {};
             playerQuerySnapshot.forEach((doc) => {
                 updatedplayers[doc.id] = { ...initialStats, name: doc.data().name }
             });
 
-            const matchq = query(collection(db, "matches"));
+            const matchq = query(collection(db, "matches"), where("group", "==", get().group.id));
             const matchQuerySnapshot = await getDocs(matchq);
             matchQuerySnapshot.forEach((doc) => {
                 const match = doc.data();
@@ -114,7 +136,7 @@ export const usePadelStore = create(
             }));
         },
         fetchTeams: async () => {
-            const q = query(collection(db, "matches"), orderBy("date", "desc"));
+            const q = query(collection(db, "matches"), where("group", "==", get().group.id));
             const querySnapshot = await getDocs(q);
             const tsMap: Teams = {}
             querySnapshot.forEach(doc => {

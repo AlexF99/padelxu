@@ -7,26 +7,31 @@ import Container from '@mui/material/Container'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-
 import { Route } from '../../../router'
-
 import styles from './Navbar.module.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserAvatar from '../../molecules/UserAvatar/UserAvatar'
 import { getAuth, signOut } from "firebase/auth";
 import { useAuthStore } from '../../../zustand/authStore'
 import { Modal } from '@mui/material'
 import GroupsModal from '../GroupsModal/GroupsModal'
+import { usePadelStore } from '../../../zustand/padelStore'
 
 const Navbar = () => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
     const navigate = useNavigate()
     const { signUserOut } = useAuthStore();
 
+    const { group } = usePadelStore();
+
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    useEffect(() => {
+        if (group.id.length < 1)
+            setOpen(true)
+    }, [])
 
 
     const handleSignOut = () => {
@@ -111,7 +116,7 @@ const Navbar = () => {
                         }}
                     >
                         <ExpandMoreIcon />
-                        Grupos
+                        {group.name}
                     </Typography>
 
                     <Modal
