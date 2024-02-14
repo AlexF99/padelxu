@@ -27,7 +27,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             signUserOut: () => { set(initialState); }
         }),
         {
-            name: 'auth-storage', // name of the item in the storage (must be unique)
+            name: 'auth-storage', // must be unique among stores
         },
     ),
 )
