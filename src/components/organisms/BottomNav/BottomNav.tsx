@@ -37,7 +37,7 @@ const BottomNav = () => {
             >
                 <BottomNavigationAction label="Home" icon={<HomeIcon />} />
                 <BottomNavigationAction
-                    label="Players"
+                    label="Jogadores"
                     icon={<PersonAddIcon />}
                 />
                 <BottomNavigationAction label="Leaderboard" icon={<LeaderboardIcon />} />

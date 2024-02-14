@@ -72,7 +72,7 @@ export default function MatchForm() {
         await addDoc(collection(db, "matches"), { ...match });
         fetchMatches();
         fetchLeaderboard();
-        navigate("/home")
+        navigate(Route.MATCHES)
     }
 
     return (

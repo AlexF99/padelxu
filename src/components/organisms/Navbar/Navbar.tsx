@@ -4,7 +4,6 @@ import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Route } from '../../../router'
@@ -61,8 +60,8 @@ const Navbar = () => {
                         className={styles.FlexCentered}
                         onClick={() => navigate(Route.HOME)}
                     >
-                        <RocketLaunchIcon
-                            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+                        <SportsBaseballIcon
+                            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, cursor: 'pointer' }}
                         />
                         <Typography
                             variant="h6"
@@ -75,14 +74,15 @@ const Navbar = () => {
                                 letterSpacing: '.3rem',
                                 color: 'inherit',
                                 textDecoration: 'none',
+                                cursor: 'pointer'
                             }}
                         >
-                            Xupadel
+                            xp
                         </Typography>
                     </Box>
 
                     <SportsBaseballIcon
-                        sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+                        sx={{ display: { xs: 'flex', md: 'none' }, mr: 1, cursor: 'pointer' }}
                         onClick={() => navigate(Route.HOME)}
                     />
 
@@ -99,6 +99,7 @@ const Navbar = () => {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
+                            cursor: 'pointer'
                         }}
                     >
                         xp
@@ -126,7 +127,7 @@ const Navbar = () => {
                         aria-describedby="modal-modal-description"
                     >
                         <>
-                            <GroupsModal onClose={handleClose}/>
+                            <GroupsModal onClose={handleClose} />
                         </>
                     </Modal>
 

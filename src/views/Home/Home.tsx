@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom'
 import GroupIcon from '@mui/icons-material/Group';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import { Route } from '../../router';
 
 const Home = () => {
 
     const links = [
-        { label: "Partidas", route: "/matches", icon: <SportsTennisIcon /> },
-        { label: "Jogadores", route: "/players", icon: <PersonAddIcon /> },
-        { label: "Duplas", route: "/teams", icon: <GroupIcon /> },
+        { label: "Partidas", route: Route.MATCHES, icon: <SportsTennisIcon /> },
+        { label: "Jogadores", route: Route.PLAYERS, icon: <PersonAddIcon /> },
+        { label: "Duplas", route: Route.TEAMS, icon: <GroupIcon /> },
+        { label: "Leaderboard", route: Route.LEADERBOARD, icon: <LeaderboardIcon /> },
     ]
 
     return (
