@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { visuallyHidden } from '@mui/utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePadelStore } from '../../zustand/padelStore';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import ClickTooltip from '../../components/atoms/ClickTooltip/ClickTooltip';
@@ -180,11 +180,7 @@ export default function Leaderboard() {
         setOrderBy(property);
     };
 
-    const visibleRows = useMemo(
-        () =>
-            stableSort(leaderboard, getComparator(order, orderBy)),
-        [order, orderBy],
-    );
+    const visibleRows = leaderboard.length ? stableSort(leaderboard, getComparator(order, orderBy)) : [];
 
     return (
         <Box className="PageContainer">
