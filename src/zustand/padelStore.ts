@@ -22,6 +22,7 @@ type Player = {
 }
 
 export type Stats = {
+    id: string,
     name: string,
     wins: number,
     sets: number,
@@ -35,7 +36,7 @@ type Teams = {
     [ids: string]: Stats
 }
 
-const initialStats = { name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: '0', setsRatio: '0' };
+const initialStats = { id: "", name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: '0', setsRatio: '0' };
 
 const incrementStats = (object: any, index: string, mypoints: number, theirpoints: number) => {
     object[index] = {
@@ -110,7 +111,7 @@ export const usePadelStore = create<PadelState & any>()(
                 const playerQuerySnapshot = await getDocs(playerq);
                 const playersMap: any = {};
                 playerQuerySnapshot.forEach((doc) => {
-                    playersMap[doc.id] = { ...initialStats, name: doc.data().name }
+                    playersMap[doc.id] = { ...initialStats, id: doc.id, name: doc.data().name }
                 });
 
                 const matchq = query(collection(db, "matches"), where("group", "==", get().group.id));
@@ -151,10 +152,10 @@ export const usePadelStore = create<PadelState & any>()(
                     const players2 = _.sortBy(match.teamTwo.players, 'id').map(p => p.id).join('_')
 
                     if (!tsMap[players1])
-                        tsMap[players1] = { ...initialStats, name: match.teamOne.players.map((p: Player) => p.name).join(" e ") };
+                        tsMap[players1] = { ...initialStats, id: doc.id, name: match.teamOne.players.map((p: Player) => p.name).join(" e ") };
 
                     if (!tsMap[players2])
-                        tsMap[players2] = { ...initialStats, name: match.teamTwo.players.map((p: Player) => p.name).join(" e ") };
+                        tsMap[players2] = { ...initialStats, id: doc.id, name: match.teamTwo.players.map((p: Player) => p.name).join(" e ") };
 
                     incrementStats(tsMap, players1, match.teamOne.points, match.teamTwo.points);
                     incrementStats(tsMap, players2, match.teamTwo.points, match.teamOne.points);

@@ -1,4 +1,4 @@
-import {createBrowserRouter} from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 
 import App from '../App'
 import Home from '../views/Home/Home'
@@ -10,6 +10,7 @@ import Login from '../views/Login/Login'
 import Matches from '../views/Matches/Matches'
 import Teams from '../views/Teams/Teams'
 import Profile from '../views/Profile/Profile'
+import PlayerInfo from '../views/Players/PlayerInfo'
 
 enum Route {
     ROOT = '/',
@@ -47,6 +48,10 @@ const publicRoutes = [
         element: <Players />,
     },
     {
+        path: Route.PLAYERS + "/:id",
+        element: <PlayerInfo />,
+    },
+    {
         path: Route.PROFILE,
         element: <Profile />,
     },
@@ -74,4 +79,4 @@ const routes = [
 
 const router = createBrowserRouter(routes)
 
-export {router, Route}
+export { router, Route }

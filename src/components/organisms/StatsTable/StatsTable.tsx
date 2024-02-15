@@ -158,11 +158,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface TableProps {
     reloadItems: () => Promise<void>,
+    onItemClick: (id: string) => void,
     items: Stats[]
 }
 
 export default function StatsTable(props: TableProps) {
-    const { items, reloadItems } = props;
+    const { items, reloadItems, onItemClick } = props;
 
     const [order, setOrder] = useState<Order>('desc');
     const [orderBy, setOrderBy] = useState<keyof Data>('wins');
@@ -207,6 +208,7 @@ export default function StatsTable(props: TableProps) {
                                     key={index}
                                     selected={false}
                                     sx={{ cursor: 'pointer' }}
+                                    onClick={() => onItemClick(row.id)}
                                 >
                                     <TableCell
                                         component="th"

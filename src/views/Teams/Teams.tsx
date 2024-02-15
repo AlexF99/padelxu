@@ -20,12 +20,14 @@ export default function Teams() {
         }
     }, [])
 
+    const onItemClick = (id: string) => { }
+
     return (
         <Box className="PageContainer">
             <Typography variant='h3'>Duplas</Typography>
             {isLoading
                 ? <CircularProgress color="success" />
-                : <StatsTable items={teams} reloadItems={updateLeaderboard}></StatsTable>
+                : <StatsTable onItemClick={(id) => onItemClick(id)} items={teams} reloadItems={updateLeaderboard}></StatsTable>
             }
         </Box>
     );
