@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from '../../zustand/padelStore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useAuthStore } from '../../zustand/authStore';
+import { Route } from '../../router';
 
 const Matches = () => {
     const [open, setOpen] = useState(false);
@@ -63,7 +64,7 @@ const Matches = () => {
             <div>
                 {isLoggedIn &&
                     <Button variant='contained'>
-                        <Link style={{ color: "#fff", textDecoration: "none" }} to={"/newmatch"}>Nova Partida</Link>
+                        <Link style={{ color: "#fff", textDecoration: "none" }} to={Route.NEW_MATCH}>Nova Partida</Link>
                     </Button>
                 }
                 <Button type="button" color='success' onClick={getMatches}><RefreshIcon /></Button>
@@ -76,25 +77,21 @@ const Matches = () => {
                         {matches[date].map((item: any) => (
                             <Box key={item.id} className="ArrayContainer">
                                 <Grid container spacing={2}>
-                                    <Grid item xs={isLoggedIn ? 5 : 6}>
-                                        <h3>Time 1</h3>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[0].name}</Typography>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[1].name}</Typography>
+                                    <Grid item xs={isLoggedIn ? 5 : 6} sx={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[0].name + " e " + item.teamOne.players[1].name}</Typography>
                                         <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.points}</Typography>
                                     </Grid>
-                                    <Grid item xs={isLoggedIn ? 5 : 6}>
-                                        <h3>Time 2</h3>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[0].name}</Typography>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[1].name}</Typography>
+                                    <Grid item xs={isLoggedIn ? 5 : 6} sx={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[0].name + " e " + item.teamTwo.players[1].name}</Typography>
                                         <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.points}</Typography>
                                     </Grid>
-                                    <Grid item xs={2} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                        {isLoggedIn &&
+                                    {isLoggedIn &&
+                                        <Grid item xs={2} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
                                                 <CloseIcon />
                                             </Fab>
-                                        }
-                                    </Grid>
+                                        </Grid>
+                                    }
                                 </Grid>
                             </Box>
                         ))}

@@ -56,7 +56,7 @@ const initialState = {
     teams: {} as Teams,
     teamKeys: [] as string[],
     criteria: Criteria.WINS,
-    teamsCriteria: Criteria.MATCHES,
+    teamsCriteria: Criteria.WINS,
     isLoading: false,
 }
 
@@ -69,8 +69,8 @@ type PadelState = {
     leaderboardKeys: any,
     teams: Teams,
     teamKeys: string[],
-    criteria: Criteria.WINS,
-    teamsCriteria: Criteria.MATCHES,
+    criteria: Criteria,
+    teamsCriteria: Criteria,
     isLoading: false,
 }
 
@@ -170,7 +170,7 @@ export const usePadelStore = create<PadelState & any>()(
                 set((state: PadelState) => ({
                     ...state,
                     teams: tsMap,
-                    teamKeys: Object.keys(tsMap).sort(function (a, b) { return tsMap[b][Criteria.MATCHES] - tsMap[a][Criteria.MATCHES] })
+                    teamKeys: Object.keys(tsMap).sort(function (a, b) { return tsMap[b][Criteria.WINS] - tsMap[a][Criteria.WINS] })
                 }));
             },
             setTeamKeys: (criteria: Criteria) => {
