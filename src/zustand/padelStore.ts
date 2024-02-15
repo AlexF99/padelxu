@@ -21,21 +21,21 @@ type Player = {
     name: string
 }
 
-type Stats = {
+export type Stats = {
     name: string,
     wins: number,
     sets: number,
     setsPlayed: number
     matches: number,
-    ratio: number,
-    setsRatio: number,
+    ratio: string,
+    setsRatio: string,
 }
 
 type Teams = {
     [ids: string]: Stats
 }
 
-const initialStats = { name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: 0, setsRatio: 0 };
+const initialStats = { name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: '0', setsRatio: '0' };
 
 const incrementStats = (object: any, index: string, mypoints: number, theirpoints: number) => {
     object[index] = {
@@ -50,25 +50,20 @@ const incrementStats = (object: any, index: string, mypoints: number, theirpoint
 const initialState = {
     groups: [] as Group[],
     group: { id: "", name: "" } as Group,
-    players: [],
+    players: [] as Player[],
     matches: {} as any,
     leaderboard: [] as Stats[],
     teams: {} as Teams,
-    teamKeys: [] as string[],
-    teamsCriteria: Criteria.WINS,
     isLoading: false,
 }
 
 type PadelState = {
     groups: Group[],
     group: Group,
-    players: [],
+    players: Player[],
     matches: any,
     leaderboard: any,
     teams: Teams,
-    teamKeys: string[],
-    criteria: Criteria,
-    teamsCriteria: Criteria,
     isLoading: false,
 }
 
@@ -135,8 +130,8 @@ export const usePadelStore = create<PadelState & any>()(
                 Object.keys(playersMap).forEach(key => {
                     playersMap[key] = {
                         ...playersMap[key],
-                        ratio: playersMap[key].matches > 0 ? (playersMap[key].wins / playersMap[key].matches).toFixed(2) : 0,
-                        setsRatio: playersMap[key].matches > 0 ? (playersMap[key].sets / playersMap[key].setsPlayed).toFixed(2) : 0
+                        ratio: playersMap[key].matches > 0 ? (playersMap[key].wins / playersMap[key].matches).toFixed(2) : '0',
+                        setsRatio: playersMap[key].matches > 0 ? (playersMap[key].sets / playersMap[key].setsPlayed).toFixed(2) : '0'
                     }
                     updatedPlayers.push(playersMap[key])
                 })
@@ -164,17 +159,16 @@ export const usePadelStore = create<PadelState & any>()(
                     incrementStats(tsMap, players1, match.teamOne.points, match.teamTwo.points);
                     incrementStats(tsMap, players2, match.teamTwo.points, match.teamOne.points);
                 });
+                Object.keys(tsMap).forEach(key => {
+                    tsMap[key] = {
+                        ...tsMap[key],
+                        ratio: tsMap[key].matches > 0 ? (tsMap[key].wins / tsMap[key].matches).toFixed(2) : '0',
+                        setsRatio: tsMap[key].matches > 0 ? (tsMap[key].sets / tsMap[key].setsPlayed).toFixed(2) : '0'
+                    }
+                })
                 set((state: PadelState) => ({
                     ...state,
-                    teams: tsMap,
-                    teamKeys: Object.keys(tsMap).sort(function (a, b) { return tsMap[b][Criteria.WINS] - tsMap[a][Criteria.WINS] })
-                }));
-            },
-            setTeamKeys: (criteria: Criteria) => {
-                set((state: PadelState) => ({
-                    ...state,
-                    teamKeys: Object.keys(state.teams).sort(function (a, b) { return state.teams[b][criteria] - state.teams[a][criteria] }),
-                    teamsCriteria: criteria
+                    teams: Object.keys(tsMap).map(k => tsMap[k]),
                 }));
             },
         }),
