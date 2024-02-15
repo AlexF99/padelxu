@@ -28,13 +28,14 @@ type Stats = {
     setsPlayed: number
     matches: number,
     ratio: number,
+    setsRatio: number,
 }
 
 type Teams = {
     [ids: string]: Stats
 }
 
-const initialStats = { name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: 0 };
+const initialStats = { name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: 0, setsRatio: 0 };
 
 const incrementStats = (object: any, index: string, mypoints: number, theirpoints: number) => {
     object[index] = {
@@ -51,11 +52,9 @@ const initialState = {
     group: { id: "", name: "" } as Group,
     players: [],
     matches: {} as any,
-    leaderboard: {} as any,
-    leaderboardKeys: [] as any,
+    leaderboard: [] as Stats[],
     teams: {} as Teams,
     teamKeys: [] as string[],
-    criteria: Criteria.WINS,
     teamsCriteria: Criteria.WINS,
     isLoading: false,
 }
@@ -66,7 +65,6 @@ type PadelState = {
     players: [],
     matches: any,
     leaderboard: any,
-    leaderboardKeys: any,
     teams: Teams,
     teamKeys: string[],
     criteria: Criteria,
@@ -115,9 +113,9 @@ export const usePadelStore = create<PadelState & any>()(
             fetchLeaderboard: async () => {
                 const playerq = query(collection(db, "players"), where("group", "==", get().group.id));
                 const playerQuerySnapshot = await getDocs(playerq);
-                const updatedplayers: any = {};
+                const playersMap: any = {};
                 playerQuerySnapshot.forEach((doc) => {
-                    updatedplayers[doc.id] = { ...initialStats, name: doc.data().name }
+                    playersMap[doc.id] = { ...initialStats, name: doc.data().name }
                 });
 
                 const matchq = query(collection(db, "matches"), where("group", "==", get().group.id));
@@ -125,28 +123,27 @@ export const usePadelStore = create<PadelState & any>()(
                 matchQuerySnapshot.forEach((doc) => {
                     const match = doc.data();
                     match.teamOne.players.forEach((player: any) => {
-                        if (updatedplayers[player.id]) incrementStats(updatedplayers, player.id, match.teamOne.points, match.teamTwo.points);
+                        if (playersMap[player.id]) incrementStats(playersMap, player.id, match.teamOne.points, match.teamTwo.points);
                     });
                     match.teamTwo.players.forEach((player: any) => {
-                        if (updatedplayers[player.id]) incrementStats(updatedplayers, player.id, match.teamTwo.points, match.teamOne.points);
+                        if (playersMap[player.id]) incrementStats(playersMap, player.id, match.teamTwo.points, match.teamOne.points);
                     });
                 });
 
-                Object.keys(updatedplayers).forEach(key => updatedplayers[key] = {
-                    ...updatedplayers[key],
-                    ratio: updatedplayers[key].matches > 0 ? (updatedplayers[key].wins / updatedplayers[key].matches).toFixed(2) : 0
+                const updatedPlayers = [] as Stats[]
+
+                Object.keys(playersMap).forEach(key => {
+                    playersMap[key] = {
+                        ...playersMap[key],
+                        ratio: playersMap[key].matches > 0 ? (playersMap[key].wins / playersMap[key].matches).toFixed(2) : 0,
+                        setsRatio: playersMap[key].matches > 0 ? (playersMap[key].sets / playersMap[key].setsPlayed).toFixed(2) : 0
+                    }
+                    updatedPlayers.push(playersMap[key])
                 })
+
                 set((state: PadelState) => ({
                     ...state,
-                    leaderboard: updatedplayers,
-                    leaderboardKeys: Object.keys(updatedplayers).sort(function (a, b) { return updatedplayers[b][`${state.criteria}`] - updatedplayers[a][`${state.criteria}`] })
-                }));
-            },
-            setCriteria: (criteria: any) => {
-                set((state: PadelState) => ({
-                    ...state,
-                    leaderboardKeys: Object.keys(state.leaderboard).sort(function (a, b) { return state.leaderboard[b][criteria] - state.leaderboard[a][criteria] }),
-                    criteria: criteria
+                    leaderboard: updatedPlayers,
                 }));
             },
             fetchTeams: async () => {
