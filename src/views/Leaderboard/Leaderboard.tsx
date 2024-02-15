@@ -8,15 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { visuallyHidden } from '@mui/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { usePadelStore } from '../../zustand/padelStore';
-import { Button, Chip, CircularProgress, Typography } from '@mui/material';
+import { Button, CircularProgress, Typography } from '@mui/material';
 import ClickTooltip from '../../components/atoms/ClickTooltip/ClickTooltip';
 
 interface Data {
