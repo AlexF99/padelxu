@@ -73,9 +73,11 @@ const Players = () => {
                     <Box key={item.id} className="ArrayContainer">
                         <Grid container spacing={2}>
                             <Grid item xs={9}>
-                                <Typography variant="subtitle1" fontWeight="bold">
-                                    {item.name}
-                                </Typography>
+                                <Link to={Route.PLAYERS + "/" + item.id} style={{ textDecoration: 'none', color: 'white' }}>
+                                    <Typography variant="subtitle1" fontWeight="bold">
+                                        {item.name}
+                                    </Typography>
+                                </Link>
                             </Grid>
                             <Grid item xs={3}>
                                 {isLoggedIn &&
@@ -85,7 +87,6 @@ const Players = () => {
                                 }
                             </Grid>
                         </Grid>
-
                     </Box>
                 ))}
         </Box>
