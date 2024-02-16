@@ -175,6 +175,9 @@ export const usePadelStore = create<PadelState & any>()(
         }),
         {
             name: 'padel-storage', // must be unique among stores
+            partialize: (state) => ({
+                group: state.group,
+            }),
         },
     ),
 )
