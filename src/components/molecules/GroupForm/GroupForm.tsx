@@ -4,6 +4,7 @@ import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { usePadelStore } from "../../../zustand/padelStore";
+import { useAuthStore } from "../../../zustand/authStore";
 
 type Inputs = {
     name: string
@@ -11,6 +12,7 @@ type Inputs = {
 
 export default function GroupForm() {
     const { fetchGroups } = usePadelStore();
+    const { loggedUser } = useAuthStore();
 
     const {
         register,
@@ -23,7 +25,7 @@ export default function GroupForm() {
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { name } = data;
         if (name.length < 1) return;
-        await addDoc(collection(db, "groups"), { name });
+        await addDoc(collection(db, "groups"), { name, createdBy: loggedUser.email });
         fetchGroups();
         reset();
     }

@@ -4,6 +4,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import GroupsIcon from '@mui/icons-material/Groups';
 import { Route } from '../../router';
 import GlobalAddAction from '../../components/molecules/GlobalAddAction/GlobalAddAction';
 
@@ -14,6 +15,7 @@ const Home = () => {
         { label: "Jogadores", route: Route.PLAYERS, icon: <PersonAddIcon /> },
         { label: "Duplas", route: Route.TEAMS, icon: <GroupIcon /> },
         { label: "Leaderboard", route: Route.LEADERBOARD, icon: <LeaderboardIcon /> },
+        { label: "Grupos", route: Route.GROUPS, icon: <GroupsIcon /> },
     ]
 
     return (
@@ -33,4 +35,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default Home;

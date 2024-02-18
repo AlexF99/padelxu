@@ -11,6 +11,7 @@ import Matches from '../views/Matches/Matches'
 import Teams from '../views/Teams/Teams'
 import Profile from '../views/Profile/Profile'
 import PlayerInfo from '../views/Players/PlayerInfo'
+import Groups from '../views/Groups/Groups'
 
 enum Route {
     ROOT = '/',
@@ -20,6 +21,7 @@ enum Route {
     LOGIN = '/login',
     FAVORITES = '/favorites',
     PLAYERS = '/players',
+    GROUPS = '/groups',
     PROFILE = '/profile',
     NEW_MATCH = '/newmatch',
     LEADERBOARD = '/leaderboard',
@@ -49,6 +51,14 @@ const publicRoutes = [
     },
     {
         path: Route.PLAYERS + "/:id",
+        element: <PlayerInfo />,
+    },
+    {
+        path: Route.GROUPS,
+        element: <Groups />,
+    },
+    {
+        path: Route.GROUPS + "/:id",
         element: <PlayerInfo />,
     },
     {

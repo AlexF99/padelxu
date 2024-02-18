@@ -11,8 +11,7 @@ const GroupsModal = (props: any) => {
     const { isLoggedIn } = useAuthStore();
 
     useEffect(() => {
-        if (groups.length < 1)
-            fetchGroups()
+        fetchGroups()
     }, [])
 
     const onChangeGroup = (group: Group) => {
@@ -47,7 +46,7 @@ const GroupsModal = (props: any) => {
                     Selecione um grupo
                 </Typography>
             }
-            {groups && groups.map((g:Group) => (
+            {groups && groups.map((g: Group) => (
                 <Box key={g.id} className="ArrayContainer" onClick={() => onChangeGroup(g)} sx={{ bgcolor: group.id === g.id ? '#efefef' : "" }}>
                     <Typography id="modal-modal-description">{g.name}</Typography>
                     {group.id === g.id && <CheckCircleIcon />}
