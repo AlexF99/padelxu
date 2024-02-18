@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Fab, Grid, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Grid, IconButton, Typography, useTheme } from '@mui/material'
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 import { Fragment, useEffect, useState } from 'react';
@@ -6,12 +6,14 @@ import { Link } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from '../../zustand/padelStore';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { useAuthStore } from '../../zustand/authStore';
 import { Route } from '../../router';
 
 const Matches = () => {
     const [open, setOpen] = useState(false);
     const [matchDelete, setMatchDelete] = useState("");
+    const theme = useTheme();
 
     const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
     const { isLoggedIn } = useAuthStore();
@@ -42,6 +44,8 @@ const Matches = () => {
         fetchLeaderboard();
         handleClose();
     }
+
+    const gridItemStyle = { display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }
 
     return (
         <Box className="PageContainer">
@@ -75,22 +79,24 @@ const Matches = () => {
                     <Fragment key={date}>
                         <Typography variant="subtitle1" fontWeight="bold">{date} ({matches[date].length} partidas)</Typography>
                         {matches[date].map((item: any) => (
-                            <Box key={item.id} className="ArrayContainer">
+                            <Box key={item.id} className="ArrayContainer" sx={{ position: "relative" }}>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={isLoggedIn ? 5 : 6} sx={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.players[0].name + " e " + item.teamOne.players[1].name}</Typography>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.points}</Typography>
+                                    <Grid item xs={5} sx={gridItemStyle}>
+                                        {item.teamOne.points > item.teamTwo.points && <EmojiEventsIcon fontSize='small' color='success' />}
+                                        <Typography variant="subtitle1" fontWeight="bold" fontSize="small">{item.teamOne.players[0].name + " e " + item.teamOne.players[1].name}</Typography>
                                     </Grid>
-                                    <Grid item xs={isLoggedIn ? 5 : 6} sx={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.players[0].name + " e " + item.teamTwo.players[1].name}</Typography>
-                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamTwo.points}</Typography>
+                                    <Grid item xs={2} sx={gridItemStyle}>
+                                        <Typography variant="subtitle1" fontWeight="bold">{item.teamOne.points + " x " + item.teamTwo.points}</Typography>
+                                    </Grid>
+                                    <Grid item xs={5} sx={gridItemStyle}>
+                                        {item.teamOne.points < item.teamTwo.points && <EmojiEventsIcon fontSize='small' color='success' />}
+                                        <Typography variant="subtitle1" fontWeight="bold" fontSize="small">{item.teamTwo.players[0].name + " e " + item.teamTwo.players[1].name}</Typography>
                                     </Grid>
                                     {isLoggedIn &&
-                                        <Grid item xs={2} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
-                                                <CloseIcon />
-                                            </Fab>
-                                        </Grid>
+                                        <IconButton sx={{ position: "absolute", top: "-4px", right: "-7px", backgroundColor: `${theme.palette.error.main}`, padding: "1px" }}
+                                            onClick={() => handleClickOpen(item.id)} size="small" color={"primary"} aria-label="remove">
+                                            <CloseIcon fontSize='small' />
+                                        </IconButton>
                                     }
                                 </Grid>
                             </Box>
