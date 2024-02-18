@@ -16,16 +16,6 @@ import { Button } from '@mui/material';
 import { Stats } from '../../../zustand/padelStore';
 import ClickTooltip from '../../atoms/ClickTooltip/ClickTooltip';
 
-interface Data {
-    name: string;
-    matches: number;
-    wins: number;
-    sets: number;
-    setsPlayed: number;
-    ratio: number;
-    setsRatio: number;
-}
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -62,7 +52,7 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 }
 
 interface HeadCell {
-    id: keyof Data;
+    id: keyof Stats;
     label: string;
     shortLabel: string;
     numeric: boolean;
@@ -78,43 +68,43 @@ const headCells: readonly HeadCell[] = [
     {
         id: 'matches',
         numeric: true,
-        label: 'partidas',
+        label: 'Partidas',
         shortLabel: 'p',
     },
     {
         id: 'wins',
         numeric: true,
-        label: 'wins',
+        label: 'Vitórias',
         shortLabel: 'w',
     },
     {
-        id: 'sets',
+        id: 'gamesWon',
         numeric: true,
-        label: 'sets ganhos',
-        shortLabel: 'sg',
+        label: 'Games Ganhos',
+        shortLabel: 'gg',
     },
     {
-        id: 'setsPlayed',
+        id: 'gamesPlayed',
         numeric: true,
-        label: 'sets jogados',
-        shortLabel: 'sj',
+        label: 'Games Jogados',
+        shortLabel: 'gj',
     },
     {
         id: 'ratio',
         numeric: true,
-        label: 'ratio',
+        label: 'Aprov. Partidas',
         shortLabel: 'r',
     },
     {
-        id: 'setsRatio',
+        id: 'gamesRatio',
         numeric: true,
-        label: 'sets ratio',
-        shortLabel: 'sr',
+        label: 'Aprov. Games',
+        shortLabel: 'gr',
     },
 ];
 
 interface EnhancedTableProps {
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Stats) => void;
     order: Order;
     orderBy: string;
     rowCount: number;
@@ -124,7 +114,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     const { order, orderBy, onRequestSort } =
         props;
     const createSortHandler =
-        (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+        (property: keyof Stats) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
         };
 
@@ -166,11 +156,11 @@ export default function StatsTable(props: TableProps) {
     const { items, reloadItems, onItemClick } = props;
 
     const [order, setOrder] = useState<Order>('desc');
-    const [orderBy, setOrderBy] = useState<keyof Data>('wins');
+    const [orderBy, setOrderBy] = useState<keyof Stats>('wins');
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Data,
+        property: keyof Stats,
     ) => {
         const isAsc = orderBy === property && order === 'desc';
         setOrder(isAsc ? 'asc' : 'desc');
@@ -219,10 +209,10 @@ export default function StatsTable(props: TableProps) {
                                     </TableCell>
                                     <TableCell align="right">{row.matches}</TableCell>
                                     <TableCell align="right">{row.wins}</TableCell>
-                                    <TableCell align="right">{row.sets}</TableCell>
-                                    <TableCell align="right">{row.setsPlayed}</TableCell>
+                                    <TableCell align="right">{row.gamesWon}</TableCell>
+                                    <TableCell align="right">{row.gamesPlayed}</TableCell>
                                     <TableCell align="right">{row.ratio}</TableCell>
-                                    <TableCell align="right">{row.setsRatio}</TableCell>
+                                    <TableCell align="right">{row.gamesRatio}</TableCell>
                                 </TableRow>
                             );
                         })}

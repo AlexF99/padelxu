@@ -34,32 +34,32 @@ export default function PlayerInfo() {
             const d = matches[day].reduce((acc: any, match: any) => {
                 let won = false;
                 let played = true;
-                let setsPlayed = 0;
-                let setsWon = 0;
+                let gamesPlayed = 0;
+                let gamesWon = 0;
                 if (match.teamOne.players.find((p: any) => p.id === id)) {
                     won = match.teamOne.points > match.teamTwo.points
-                    setsWon += match.teamOne.points;
+                    gamesWon += match.teamOne.points;
                 } else if (match.teamTwo.players.find((p: any) => p.id === id)) {
                     won = match.teamTwo.points > match.teamOne.points;
-                    setsWon += match.teamTwo.points;
+                    gamesWon += match.teamTwo.points;
                 } else played = false;
 
-                if (played) setsPlayed += match.teamOne.points + match.teamTwo.points;
+                if (played) gamesPlayed += match.teamOne.points + match.teamTwo.points;
                 return {
                     ...acc,
                     m: acc.m + (played ? 1 : 0),
                     wins: acc.wins + (won ? 1 : 0),
-                    sets: acc.sets + setsWon,
-                    setsPlayed: acc.setsPlayed + setsPlayed,
+                    gamesWon: acc.gamesWon + gamesWon,
+                    gamesPlayed: acc.gamesPlayed + gamesPlayed,
                     ratio: (acc.wins + (won ? 1 : 0)) / (acc.m + (played ? 1 : 0)),
-                    setsRatio: (acc.sets + setsWon) / (acc.setsPlayed + setsPlayed)
+                    gamesRatio: (acc.gamesWon + gamesWon) / (acc.gamesPlayed + gamesPlayed)
                 }
-            }, { m: 0, wins: 0, sets: 0, setsPlayed: 0, ratio: 0, setsRatio: 0, accRatio: 0, date: day })
+            }, { m: 0, wins: 0, gamesWon: 0, gamesPlayed: 0, ratio: 0, gamesRatio: 0, accWinRatio: 0, date: day })
 
-            const accData = newData.reduce((acc: any, dayData: any) => ({ wins: acc.wins + dayData.wins, m: acc.m + dayData.m, sets: acc.sets + dayData.sets, setsPlayed: acc.setsPlayed + dayData.setsPlayed }),
-                { wins: d.wins, m: d.m, sets: d.sets, setsPlayed: d.setsPlayed })
+            const accData = newData.reduce((acc: any, dayData: any) => ({ wins: acc.wins + dayData.wins, m: acc.m + dayData.m, gamesWon: acc.gamesWon + dayData.gamesWon, gamesPlayed: acc.gamesPlayed + dayData.gamesPlayed }),
+                { wins: d.wins, m: d.m, gamesWon: d.gamesWon, gamesPlayed: d.gamesPlayed })
 
-            newData.push({ ...d, accRatio: accData.wins / accData.m, accSetsRatio: accData.sets / accData.setsPlayed })
+            newData.push({ ...d, accWinRatio: accData.wins / accData.m, accGamesRatio: accData.gamesWon / accData.gamesPlayed })
         })
 
         setData(newData)
@@ -79,11 +79,11 @@ export default function PlayerInfo() {
                             <Grid item xs={6}>
                                 <Typography variant="body1">Partidas: {player?.matches}</Typography>
                                 <Typography variant="body1">Vitórias: {player?.wins}</Typography>
-                                <Typography variant="body1">Sets ganhos: {player?.sets}</Typography>
+                                <Typography variant="body1">games ganhos: {player?.gamesWon}</Typography>
                             </Grid>
                             <Grid item xs={6}>
                                 <Typography variant="body1">Aproveitamento: {player?.ratio}</Typography>
-                                <Typography variant="body1">Aprov. sets: {player?.setsRatio}</Typography>
+                                <Typography variant="body1">Aprov. games: {player?.gamesRatio}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
@@ -92,7 +92,7 @@ export default function PlayerInfo() {
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
                                 <LineChart data={data}>
-                                    <Line type="monotone" dataKey="accRatio" stroke="#8884d8" />
+                                    <Line type="monotone" dataKey="accWinRatio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />
                                     <YAxis domain={[0, 1]} />
@@ -111,12 +111,12 @@ export default function PlayerInfo() {
                         </Grid>
                     </Grid>
 
-                    <Typography variant="h6">Sets</Typography>
+                    <Typography variant="h6">Games</Typography>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
                                 <LineChart data={data}>
-                                    <Line type="monotone" dataKey="accSetsRatio" stroke="#8884d8" />
+                                    <Line type="monotone" dataKey="accGamesRatio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />
                                     <YAxis domain={[0, 1]} />
@@ -126,7 +126,7 @@ export default function PlayerInfo() {
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
                                 <BarChart data={data}>
-                                    <Bar type="monotone" dataKey="setsRatio" stroke="#8884d8" />
+                                    <Bar type="monotone" dataKey="gamesRatio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />
                                     <YAxis domain={[0, 1]} />

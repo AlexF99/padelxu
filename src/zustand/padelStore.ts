@@ -4,13 +4,6 @@ import { db } from '../firebase';
 import { persist } from 'zustand/middleware'
 import _ from 'lodash';
 
-export enum Criteria {
-    WINS = 'wins',
-    SETS = 'sets',
-    RATIO = 'ratio',
-    MATCHES = 'matches',
-}
-
 export type Group = {
     id: string,
     name: string
@@ -25,24 +18,24 @@ export type Stats = {
     id: string,
     name: string,
     wins: number,
-    sets: number,
-    setsPlayed: number
+    gamesWon: number,
+    gamesPlayed: number
     matches: number,
     ratio: string,
-    setsRatio: string,
+    gamesRatio: string,
 }
 
 type Teams = {
     [ids: string]: Stats
 }
 
-const initialStats = { id: "", name: "", wins: 0, sets: 0, setsPlayed: 0, matches: 0, ratio: '0', setsRatio: '0' };
+const initialStats = { id: "", name: "", wins: 0, gamesWon: 0, gamesPlayed: 0, matches: 0, ratio: '0', gamesRatio: '0' };
 
 const incrementStats = (object: any, index: string, mypoints: number, theirpoints: number) => {
     object[index] = {
         ...object[index],
-        sets: object[index].sets + mypoints,
-        setsPlayed: object[index].setsPlayed + mypoints + theirpoints,
+        gamesWon: object[index].gamesWon + mypoints,
+        gamesPlayed: object[index].gamesPlayed + mypoints + theirpoints,
         wins: object[index].wins + (mypoints > theirpoints ? 1 : 0),
         matches: object[index].matches + 1
     };
@@ -96,7 +89,7 @@ export const usePadelStore = create<PadelState & any>()(
             },
             setGroup: (group: Group) => { set((state: PadelState) => ({ ...initialState, groups: state.groups, group })) },
             fetchMatches: async () => {
-                const q = query(collection(db, "matches"), orderBy("date", "desc"), where("group", "==", get().group.id));
+                const q = query(collection(db, "matches"), where("group", "==", get().group.id), orderBy("date", "desc"));
                 const querySnapshot = await getDocs(q);
                 const updatedMatches: any = []
                 querySnapshot.forEach((doc) => {
@@ -132,7 +125,7 @@ export const usePadelStore = create<PadelState & any>()(
                     playersMap[key] = {
                         ...playersMap[key],
                         ratio: playersMap[key].matches > 0 ? (playersMap[key].wins / playersMap[key].matches).toFixed(2) : '0',
-                        setsRatio: playersMap[key].matches > 0 ? (playersMap[key].sets / playersMap[key].setsPlayed).toFixed(2) : '0'
+                        gamesRatio: playersMap[key].matches > 0 ? (playersMap[key].gamesWon / playersMap[key].gamesPlayed).toFixed(2) : '0'
                     }
                     updatedPlayers.push(playersMap[key])
                 })
@@ -164,7 +157,7 @@ export const usePadelStore = create<PadelState & any>()(
                     tsMap[key] = {
                         ...tsMap[key],
                         ratio: tsMap[key].matches > 0 ? (tsMap[key].wins / tsMap[key].matches).toFixed(2) : '0',
-                        setsRatio: tsMap[key].matches > 0 ? (tsMap[key].sets / tsMap[key].setsPlayed).toFixed(2) : '0'
+                        gamesRatio: tsMap[key].matches > 0 ? (tsMap[key].gamesWon / tsMap[key].gamesPlayed).toFixed(2) : '0'
                     }
                 })
                 set((state: PadelState) => ({
