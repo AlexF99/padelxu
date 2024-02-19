@@ -12,6 +12,7 @@ import Teams from '../views/Teams/Teams'
 import Profile from '../views/Profile/Profile'
 import PlayerInfo from '../views/Players/PlayerInfo'
 import Groups from '../views/Groups/Groups'
+import Group from '../views/Groups/Group'
 
 enum Route {
     ROOT = '/',
@@ -59,7 +60,7 @@ const publicRoutes = [
     },
     {
         path: Route.GROUPS + "/:id",
-        element: <PlayerInfo />,
+        element: <Group />,
     },
     {
         path: Route.PROFILE,

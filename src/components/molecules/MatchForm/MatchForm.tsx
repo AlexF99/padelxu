@@ -69,7 +69,7 @@ export default function MatchForm() {
             date: new Date()
         }
 
-        await addDoc(collection(db, "matches"), { ...match });
+        await addDoc(collection(db, "groups", group.id, "matches"), { ...match });
         fetchMatches();
         fetchLeaderboard();
         navigate(Route.MATCHES)

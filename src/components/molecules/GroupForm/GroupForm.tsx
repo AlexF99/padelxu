@@ -24,9 +24,12 @@ export default function GroupForm() {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { name } = data;
-        if (name.length < 1) return;
-        await addDoc(collection(db, "groups"), { name, createdBy: loggedUser.email });
-        fetchGroups();
+        if (name.length < 1 || !loggedUser.email) return;
+        const members: any = [];
+        const managers: any = [];
+        managers.push(loggedUser.email)
+        await addDoc(collection(db, "groups"), { name, createdBy: loggedUser.email, visibility: "private", members, managers });
+        fetchGroups(loggedUser.email);
         reset();
     }
 
@@ -39,7 +42,7 @@ export default function GroupForm() {
                 </div>
                 <div style={{ display: "flex" }}>
                     <Button type="submit" variant="contained">add</Button>
-                    <Button type="button" onClick={fetchGroups} color="success"><RefreshIcon /></Button>
+                    <Button type="button" onClick={() => fetchGroups(loggedUser.email)} color="success"><RefreshIcon /></Button>
                 </div>
             </form>
         </Box>

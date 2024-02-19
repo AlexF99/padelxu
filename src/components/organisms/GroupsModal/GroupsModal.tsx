@@ -8,10 +8,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const GroupsModal = (props: any) => {
     const { onClose } = props;
     const { group, groups, fetchGroups, setGroup, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams } = usePadelStore();
-    const { isLoggedIn } = useAuthStore();
+    const { isLoggedIn, loggedUser } = useAuthStore();
 
     useEffect(() => {
-        fetchGroups()
+        fetchGroups(loggedUser.email)
     }, [])
 
     const onChangeGroup = (group: Group) => {

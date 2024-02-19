@@ -15,7 +15,7 @@ const Matches = () => {
     const [matchDelete, setMatchDelete] = useState("");
     const theme = useTheme();
 
-    const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
+    const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
     const { isLoggedIn } = useAuthStore();
 
     const handleClickOpen = (matchId: string) => {
@@ -39,7 +39,7 @@ const Matches = () => {
     }, [])
 
     const handleAgree = async () => {
-        await deleteDoc(doc(db, "matches", matchDelete));
+        await deleteDoc(doc(db, "groups", group.id, "matches", matchDelete));
         await getMatches();
         fetchLeaderboard();
         handleClose();

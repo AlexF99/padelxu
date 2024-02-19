@@ -1,4 +1,4 @@
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection, getDocs, or, orderBy, query, where } from 'firebase/firestore';
 import { create } from 'zustand'
 import { db } from '../firebase';
 import { persist } from 'zustand/middleware'
@@ -78,18 +78,23 @@ export const usePadelStore = create<PadelState & any>()(
                 });
                 set((state: PadelState) => ({ ...state, players: updatedplayers }));
             },
-            fetchGroups: async () => {
-                const q = query(collection(db, "groups"));
-                const querySnapshot = await getDocs(q);
+            fetchGroups: async (userEmail: string) => {
                 const updatedGroups: Group[] = []
-                querySnapshot.forEach((doc) => {
+                const q = !!userEmail ? query(collection(db, "groups"), or(
+                    where("visibility", "==", "public"),
+                    where("members", "array-contains", userEmail),
+                    where("managers", "array-contains", userEmail),
+                )) : query(collection(db, "groups"), where("visibility", "==", "public"))
+
+                const querySnapshot = await getDocs(q);
+                querySnapshot?.forEach((doc) => {
                     updatedGroups.push({ id: doc.id, name: doc.data().name })
                 });
                 set((state: PadelState) => ({ ...state, groups: updatedGroups }));
             },
             setGroup: (group: Group) => { set((state: PadelState) => ({ ...initialState, groups: state.groups, group })) },
             fetchMatches: async () => {
-                const q = query(collection(db, "matches"), where("group", "==", get().group.id), orderBy("date", "desc"));
+                const q = query(collection(db, "groups", get().group.id, "matches"), orderBy("date", "desc"));
                 const querySnapshot = await getDocs(q);
                 const updatedMatches: any = []
                 querySnapshot.forEach((doc) => {
@@ -107,7 +112,7 @@ export const usePadelStore = create<PadelState & any>()(
                     playersMap[doc.id] = { ...initialStats, id: doc.id, name: doc.data().name }
                 });
 
-                const matchq = query(collection(db, "matches"), where("group", "==", get().group.id));
+                const matchq = query(collection(db, "groups", get().group.id, "matches"));
                 const matchQuerySnapshot = await getDocs(matchq);
                 matchQuerySnapshot.forEach((doc) => {
                     const match = doc.data();
@@ -136,7 +141,7 @@ export const usePadelStore = create<PadelState & any>()(
                 }));
             },
             fetchTeams: async () => {
-                const q = query(collection(db, "matches"), where("group", "==", get().group.id));
+                const q = query(collection(db, "groups", get().group.id, "matches"));
                 const querySnapshot = await getDocs(q);
                 const tsMap: Teams = {}
                 querySnapshot.forEach(doc => {
