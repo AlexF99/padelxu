@@ -18,7 +18,7 @@ const Home = () => {
             { label: "Jogadores", route: Route.PLAYERS, icon: <PersonAddIcon /> },
             { label: "Duplas", route: Route.TEAMS, icon: <GroupIcon /> },
             { label: "Leaderboard", route: Route.LEADERBOARD, icon: <LeaderboardIcon /> },
-            { label: "Grupos", route: Route.GROUPS, icon: <GroupsIcon /> },
+            { label: "Meus Grupos", route: Route.GROUPS, icon: <GroupsIcon /> },
         ] :
         [
             { label: "Partidas", route: Route.MATCHES, icon: <SportsTennisIcon /> },

@@ -11,8 +11,8 @@ import Matches from '../views/Matches/Matches'
 import Teams from '../views/Teams/Teams'
 import Profile from '../views/Profile/Profile'
 import PlayerInfo from '../views/Players/PlayerInfo'
-import Groups from '../views/Groups/Groups'
-import Group from '../views/Groups/Group'
+import Groups from '../views/Groups/MyGroups'
+import GroupSettings from '../views/Groups/GroupSettings'
 
 enum Route {
     ROOT = '/',
@@ -60,7 +60,7 @@ const publicRoutes = [
     },
     {
         path: Route.GROUPS + "/:id",
-        element: <Group />,
+        element: <GroupSettings />,
     },
     {
         path: Route.PROFILE,
