@@ -14,7 +14,7 @@ const Matches = () => {
     const [matchDelete, setMatchDelete] = useState("");
     const theme = useTheme();
 
-    const { isLoggedIn, isManager, loggedUser, matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
+    const { isLoggedIn, isManager, matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);

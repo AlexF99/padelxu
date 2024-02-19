@@ -4,7 +4,7 @@ import { db } from "../../../firebase";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { usePadelStore } from "../../../zustand/padelStore";
 import { Route } from "../../../router";
 
@@ -15,7 +15,7 @@ export default function MatchForm() {
     const [points, setPoints] = useState<{ 0: number, 1: number }>({ 0: 0, 1: 0 })
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
-    const { fetchMatches, fetchLeaderboard, group, isLoggedIn } = usePadelStore();
+    const { fetchMatches, fetchLeaderboard, group } = usePadelStore();
 
     const navigate = useNavigate();
 
