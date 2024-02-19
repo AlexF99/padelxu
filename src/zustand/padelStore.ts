@@ -38,15 +38,19 @@ type PadelState = {
     leaderboard: Stats[],
     teams: Stats[],
     isLoading: boolean,
-}
-
-type AuthState = {
     loggedUser: User,
     isLoggedIn: boolean,
 }
 
-type AuthActions = {
-    // eslint-disable-next-line
+type PadelActions = {
+    setIsLoading: (loadingState: boolean) => void
+    fetchPlayers: () => Promise<void>
+    fetchGroups: (userEmail: string | null) => Promise<void>
+    setGroup: (group: Group) => void
+    fetchMatches: () => Promise<void>
+    fetchLeaderboard: () => Promise<void>
+    fetchTeams: () => Promise<void>
+    /* eslint-disable-next-line no-empty-pattern */
     setLoggedUser: ({ }: User) => void
     signUserOut: () => void
 }
@@ -75,19 +79,16 @@ const initialState = {
     isLoggedIn: false,
 }
 
-type BoundState = PadelState & AuthState & AuthActions;
 
-
-export const usePadelStore = create<BoundState & any>()(
+export const usePadelStore = create<PadelState & PadelActions>()(
     persist(
         (set, get) => ({
             ...initialState,
-            reset: () => { set(initialState) },
             setIsLoading: (value: boolean) => {
-                set((state: BoundState) => ({ ...state, isLoading: value }));
+                set((state: PadelState) => ({ ...state, isLoading: value }));
             },
             setLoggedUser: (loggedUser: User) => {
-                set((state: any) => ({ ...state, loggedUser, isLoggedIn: true }));
+                set((state: PadelState) => ({ ...state, loggedUser, isLoggedIn: true }));
             },
             signUserOut: () => { set(initialState); },
             fetchPlayers: async () => {
@@ -98,9 +99,9 @@ export const usePadelStore = create<BoundState & any>()(
                 querySnapshot.forEach((doc) => {
                     updatedplayers.push({ id: doc.id, name: doc.data().name })
                 });
-                set((state: BoundState) => ({ ...state, players: updatedplayers }));
+                set((state: PadelState) => ({ ...state, players: updatedplayers }));
             },
-            fetchGroups: async (userEmail: string) => {
+            fetchGroups: async (userEmail: string | null) => {
                 const updatedGroups: Group[] = []
                 const q = !!userEmail ? query(collection(db, "groups"), or(
                     where("visibility", "==", "public"),
@@ -112,9 +113,9 @@ export const usePadelStore = create<BoundState & any>()(
                 querySnapshot?.forEach((doc) => {
                     updatedGroups.push({ id: doc.id, name: doc.data().name })
                 });
-                set((state: BoundState) => ({ ...state, groups: updatedGroups }));
+                set((state: PadelState) => ({ ...state, groups: updatedGroups }));
             },
-            setGroup: (group: Group) => { set((state: BoundState) => ({ ...initialState, isLoggedIn: state.isLoggedIn, loggedUser: state.loggedUser, groups: state.groups, group })) },
+            setGroup: (group: Group) => { set((state: PadelState) => ({ ...initialState, isLoggedIn: state.isLoggedIn, loggedUser: state.loggedUser, groups: state.groups, group })) },
             fetchMatches: async () => {
                 if (!get().group.id) return;
                 const q = query(collection(db, "groups", get().group.id, "matches"), orderBy("date", "desc"));
@@ -125,7 +126,7 @@ export const usePadelStore = create<BoundState & any>()(
                     updatedMatches.push({ ...doc.data(), id: doc.id, date: date.toDate().toDateString() })
                 });
                 const grouped = _.groupBy(updatedMatches, 'date')
-                set((state: BoundState) => ({ ...state, matches: grouped }));
+                set((state: PadelState) => ({ ...state, matches: grouped }));
             },
             fetchLeaderboard: async () => {
                 if (!get().group.id) return;
@@ -159,7 +160,7 @@ export const usePadelStore = create<BoundState & any>()(
                     updatedPlayers.push(playersMap[key])
                 })
 
-                set((state: BoundState) => ({
+                set((state: PadelState) => ({
                     ...state,
                     leaderboard: updatedPlayers,
                 }));
@@ -190,7 +191,7 @@ export const usePadelStore = create<BoundState & any>()(
                         gamesRatio: tsMap[key].matches > 0 ? (tsMap[key].gamesWon / tsMap[key].gamesPlayed).toFixed(2) : '0'
                     }
                 })
-                set((state: BoundState) => ({
+                set((state: PadelState) => ({
                     ...state,
                     teams: Object.keys(tsMap).map(k => tsMap[k]),
                 }));

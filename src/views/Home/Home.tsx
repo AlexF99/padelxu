@@ -7,16 +7,24 @@ import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { Route } from '../../router';
 import GlobalAddAction from '../../components/molecules/GlobalAddAction/GlobalAddAction';
+import { usePadelStore } from '../../zustand/padelStore';
 
 const Home = () => {
+    const { isLoggedIn } = usePadelStore()
 
-    const links = [
-        { label: "Partidas", route: Route.MATCHES, icon: <SportsTennisIcon /> },
-        { label: "Jogadores", route: Route.PLAYERS, icon: <PersonAddIcon /> },
-        { label: "Duplas", route: Route.TEAMS, icon: <GroupIcon /> },
-        { label: "Leaderboard", route: Route.LEADERBOARD, icon: <LeaderboardIcon /> },
-        { label: "Grupos", route: Route.GROUPS, icon: <GroupsIcon /> },
-    ]
+    const links = isLoggedIn ?
+        [
+            { label: "Partidas", route: Route.MATCHES, icon: <SportsTennisIcon /> },
+            { label: "Jogadores", route: Route.PLAYERS, icon: <PersonAddIcon /> },
+            { label: "Duplas", route: Route.TEAMS, icon: <GroupIcon /> },
+            { label: "Leaderboard", route: Route.LEADERBOARD, icon: <LeaderboardIcon /> },
+            { label: "Grupos", route: Route.GROUPS, icon: <GroupsIcon /> },
+        ] :
+        [
+            { label: "Partidas", route: Route.MATCHES, icon: <SportsTennisIcon /> },
+            { label: "Duplas", route: Route.TEAMS, icon: <GroupIcon /> },
+            { label: "Leaderboard", route: Route.LEADERBOARD, icon: <LeaderboardIcon /> },
+        ]
 
     return (
         <Box className="PageContainer">
