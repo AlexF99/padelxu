@@ -12,7 +12,7 @@ import { Route } from "../../router";
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const { isLoggedIn, players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
+    const { isLoggedIn, isManager, isCreator, players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
 
     const updatePlayers = async () => {
         setIsLoading(true);
@@ -59,12 +59,15 @@ const Players = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {isLoggedIn ? <PlayerForm /> : <div>
+            {!isLoggedIn ? <div>
                 <Button variant='contained' style={{ marginRight: "5px" }}>
                     <Link style={{ color: "#fff", textDecoration: "none" }} to={Route.LOGIN}>Login</Link>
                 </Button>
                 para adicionar jogadores
-            </div>}
+            </div> :
+                isManager ? <PlayerForm /> :
+                    <div>É necessário ser gerenciador do grupo para adicionar jogadores</div>
+            }
             {isLoading
                 ? <CircularProgress color="success" />
                 : players && players.map((item: any) => (
@@ -78,7 +81,7 @@ const Players = () => {
                                 </Link>
                             </Grid>
                             <Grid item xs={3}>
-                                {isLoggedIn &&
+                                {isLoggedIn && isCreator &&
                                     <Fab onClick={() => handleClickOpen(item.id)} size="small" color="error" aria-label="remove">
                                         <CloseIcon />
                                     </Fab>

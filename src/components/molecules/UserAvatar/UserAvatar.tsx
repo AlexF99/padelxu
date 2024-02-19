@@ -21,7 +21,7 @@ const UserAvatar = (props: AvatarProps) => {
         anchorElUser,
     } = props
 
-    const { isLoggedIn } = usePadelStore();
+    const { isLoggedIn, loggedUser } = usePadelStore();
     const navigate = useNavigate();
 
     return (
@@ -51,9 +51,15 @@ const UserAvatar = (props: AvatarProps) => {
                 onClose={handleCloseUserMenu}
             >
                 {isLoggedIn
-                    ? <MenuItem onClick={handleSignOut}>
-                        <Typography textAlign="center">Logout</Typography>
-                    </MenuItem>
+                    ?
+                    <Box>
+                        <MenuItem>
+                            <Typography textAlign="center">{loggedUser.email}</Typography>
+                        </MenuItem>
+                        <MenuItem onClick={handleSignOut}>
+                            <Typography textAlign="center">Logout</Typography>
+                        </MenuItem>
+                    </Box>
                     : <MenuItem onClick={() => navigate(Route.LOGIN)}>
                         <Typography textAlign="center">Login</Typography>
                     </MenuItem>

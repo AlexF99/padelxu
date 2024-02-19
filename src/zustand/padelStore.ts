@@ -7,7 +7,11 @@ import _ from 'lodash';
 
 export type Group = {
     id: string,
-    name: string
+    name: string,
+    createdBy: string,
+    visibility: string,
+    members: string[],
+    managers: string[],
 }
 
 type Player = {
@@ -40,6 +44,9 @@ type PadelState = {
     isLoading: boolean,
     loggedUser: User,
     isLoggedIn: boolean,
+    isManager: boolean,
+    isMember: boolean,
+    isCreator: boolean,
 }
 
 type PadelActions = {
@@ -77,6 +84,9 @@ const initialState = {
     isLoading: false,
     loggedUser: {} as User,
     isLoggedIn: false,
+    isManager: false,
+    isMember: false,
+    isCreator: false,
 }
 
 
@@ -107,15 +117,39 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                     where("visibility", "==", "public"),
                     where("members", "array-contains", userEmail),
                     where("managers", "array-contains", userEmail),
+                    where("createdBy", "==", userEmail),
                 )) : query(collection(db, "groups"), where("visibility", "==", "public"))
 
                 const querySnapshot = await getDocs(q);
                 querySnapshot?.forEach((doc) => {
-                    updatedGroups.push({ id: doc.id, name: doc.data().name })
+                    const group: Group = {
+                        id: doc.id,
+                        name: doc.data().name ? doc.data().name : "",
+                        createdBy: doc.data().createdBy ? doc.data().createdBy : "",
+                        visibility: doc.data().visibility ? doc.data().visibility : "",
+                        members: doc.data().members ? doc.data().members : [],
+                        managers: doc.data().managers ? doc.data().managers : [],
+                    }
+                    updatedGroups.push(group)
                 });
                 set((state: PadelState) => ({ ...state, groups: updatedGroups }));
             },
-            setGroup: (group: Group) => { set((state: PadelState) => ({ ...initialState, isLoggedIn: state.isLoggedIn, loggedUser: state.loggedUser, groups: state.groups, group })) },
+            setGroup: (group: Group) => {
+                const userEmail = get().loggedUser.email;
+                const isCreator: boolean = get().isLoggedIn && (group.createdBy === userEmail);
+                const isManager: boolean = get().isLoggedIn && (isCreator || (!!userEmail && group.managers.includes(userEmail)));
+                const isMember: boolean = get().isLoggedIn && (isCreator || isManager || (!!userEmail && group.members.includes(userEmail)));
+                set((state: PadelState) => ({
+                    ...initialState,
+                    isLoggedIn: state.isLoggedIn,
+                    loggedUser: state.loggedUser,
+                    groups: state.groups,
+                    group,
+                    isCreator,
+                    isManager,
+                    isMember,
+                }))
+            },
             fetchMatches: async () => {
                 if (!get().group.id) return;
                 const q = query(collection(db, "groups", get().group.id, "matches"), orderBy("date", "desc"));

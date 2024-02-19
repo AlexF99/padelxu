@@ -14,7 +14,7 @@ const Matches = () => {
     const [matchDelete, setMatchDelete] = useState("");
     const theme = useTheme();
 
-    const { isLoggedIn, matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
+    const { isLoggedIn, isManager, loggedUser, matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);
@@ -37,6 +37,7 @@ const Matches = () => {
     }, [])
 
     const handleAgree = async () => {
+        if (!isManager) return;
         await deleteDoc(doc(db, "groups", group.id, "matches", matchDelete));
         await getMatches();
         fetchLeaderboard();
@@ -90,7 +91,7 @@ const Matches = () => {
                                         {item.teamOne.points < item.teamTwo.points && <EmojiEventsIcon fontSize='small' color='success' />}
                                         <Typography variant="subtitle1" fontWeight="bold" fontSize="small">{item.teamTwo.players[0].name + " e " + item.teamTwo.players[1].name}</Typography>
                                     </Grid>
-                                    {isLoggedIn &&
+                                    {isLoggedIn && isManager &&
                                         <IconButton sx={{ position: "absolute", top: "-4px", right: "-7px", backgroundColor: `${theme.palette.error.main}`, padding: "1px" }}
                                             onClick={() => handleClickOpen(item.id)} size="small" color={"primary"} aria-label="remove">
                                             <CloseIcon fontSize='small' />

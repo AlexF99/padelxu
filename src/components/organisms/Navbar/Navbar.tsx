@@ -29,7 +29,7 @@ const Navbar = () => {
     useEffect(() => {
         if (group.id.length < 1 && location.pathname !== Route.LOGIN)
             setOpen(true)
-    }, [])
+    }, [location.pathname])
 
 
     const handleSignOut = () => {

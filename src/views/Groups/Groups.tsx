@@ -18,7 +18,7 @@ const Groups = () => {
     return (
         <Box className="PageContainer">
             <Typography variant='h3'>Grupos</Typography>
-            {groups && groups.map((g: Group) => (
+            {groups && groups.filter((g: Group) => g.managers.includes(`${loggedUser.email}`)).map((g: Group) => (
                 <Box key={g.id} className="ArrayContainer" onClick={() => { navigate(Route.GROUPS + "/" + g.id) }}>
                     <Typography id="modal-modal-description">{g.name}</Typography>
                 </Box>
