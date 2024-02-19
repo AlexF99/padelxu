@@ -1,9 +1,9 @@
 import { User, getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useAuthStore } from "../../zustand/authStore";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Box, Button, TextField } from "@mui/material";
 import { Route } from "../../router";
 import { useNavigate } from "react-router-dom";
+import { usePadelStore } from "../../zustand/padelStore";
 
 type Inputs = {
     email: string
@@ -12,7 +12,7 @@ type Inputs = {
 
 const Login = () => {
     const auth = getAuth();
-    const { setLoggedUser } = useAuthStore();
+    const { setLoggedUser } = usePadelStore();
     const {
         register,
         handleSubmit,

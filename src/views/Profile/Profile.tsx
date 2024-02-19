@@ -1,11 +1,11 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
-import { useAuthStore } from '../../zustand/authStore';
 import { Link } from 'react-router-dom';
 import { Route } from '../../router';
+import { usePadelStore } from '../../zustand/padelStore';
 
 const Profile = () => {
 
-    const { isLoggedIn, loggedUser } = useAuthStore();
+    const { isLoggedIn, loggedUser } = usePadelStore();
 
     return (
         <Box className="PageContainer">

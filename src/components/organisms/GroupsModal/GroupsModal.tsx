@@ -2,13 +2,11 @@ import { Box, Typography } from "@mui/material"
 import { Group, usePadelStore } from "../../../zustand/padelStore";
 import GroupForm from "../../molecules/GroupForm/GroupForm";
 import { useEffect } from "react";
-import { useAuthStore } from "../../../zustand/authStore";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const GroupsModal = (props: any) => {
     const { onClose } = props;
-    const { group, groups, fetchGroups, setGroup, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams } = usePadelStore();
-    const { isLoggedIn, loggedUser } = useAuthStore();
+    const { isLoggedIn, loggedUser, group, groups, fetchGroups, setGroup, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams } = usePadelStore();
 
     useEffect(() => {
         fetchGroups(loggedUser.email)

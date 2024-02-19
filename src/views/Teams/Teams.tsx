@@ -15,7 +15,7 @@ export default function Teams() {
     }
 
     useEffect(() => {
-        if (Object.keys(teams).length < 1) {
+        if (teams.length < 1) {
             updateLeaderboard()
         }
     }, [])

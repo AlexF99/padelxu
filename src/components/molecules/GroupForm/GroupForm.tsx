@@ -4,15 +4,13 @@ import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { usePadelStore } from "../../../zustand/padelStore";
-import { useAuthStore } from "../../../zustand/authStore";
 
 type Inputs = {
     name: string
 }
 
 export default function GroupForm() {
-    const { fetchGroups } = usePadelStore();
-    const { loggedUser } = useAuthStore();
+    const { fetchGroups, loggedUser } = usePadelStore();
 
     const {
         register,

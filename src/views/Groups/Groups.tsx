@@ -3,13 +3,11 @@ import { useEffect } from 'react'
 import { Group, usePadelStore } from '../../zustand/padelStore';
 import { useNavigate } from 'react-router-dom';
 import { Route } from '../../router';
-import { useAuthStore } from '../../zustand/authStore';
 
 
 const Groups = () => {
 
-    const { groups, fetchGroups } = usePadelStore();
-    const { loggedUser } = useAuthStore();
+    const { loggedUser, groups, fetchGroups } = usePadelStore();
     const navigate = useNavigate();
 
 

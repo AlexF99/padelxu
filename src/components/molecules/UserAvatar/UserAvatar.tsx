@@ -7,9 +7,9 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 
 import AvatarProps from '../../../types/AvatarProps'
-import { useAuthStore } from '../../../zustand/authStore'
 import { useNavigate } from 'react-router-dom'
 import { Route } from '../../../router'
+import { usePadelStore } from '../../../zustand/padelStore'
 
 const UserAvatar = (props: AvatarProps) => {
     const {
@@ -21,7 +21,7 @@ const UserAvatar = (props: AvatarProps) => {
         anchorElUser,
     } = props
 
-    const { isLoggedIn } = useAuthStore();
+    const { isLoggedIn } = usePadelStore();
     const navigate = useNavigate();
 
     return (

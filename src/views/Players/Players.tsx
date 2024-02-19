@@ -5,7 +5,6 @@ import { db } from "../../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from "../../zustand/padelStore";
-import { useAuthStore } from "../../zustand/authStore";
 import { Link } from "react-router-dom";
 import { Route } from "../../router";
 
@@ -13,8 +12,7 @@ import { Route } from "../../router";
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const { players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
-    const { isLoggedIn } = useAuthStore();
+    const { isLoggedIn, players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
 
     const updatePlayers = async () => {
         setIsLoading(true);

@@ -7,7 +7,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from '../../zustand/padelStore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { useAuthStore } from '../../zustand/authStore';
 import { Route } from '../../router';
 
 const Matches = () => {
@@ -15,8 +14,7 @@ const Matches = () => {
     const [matchDelete, setMatchDelete] = useState("");
     const theme = useTheme();
 
-    const { matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
-    const { isLoggedIn } = useAuthStore();
+    const { isLoggedIn, matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);
