@@ -15,7 +15,7 @@ export default function MatchForm() {
     const [points, setPoints] = useState<{ 0: number, 1: number }>({ 0: 0, 1: 0 })
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
-    const { fetchMatches, fetchLeaderboard, group } = usePadelStore();
+    const { fetchMatches, fetchLeaderboard, group, loggedUser } = usePadelStore();
 
     const navigate = useNavigate();
 
@@ -64,7 +64,8 @@ export default function MatchForm() {
             group: group.id,
             teamOne: { points: points[0], players: teamOne },
             teamTwo: { points: points[1], players: teamTwo },
-            date: new Date()
+            date: new Date(),
+            createdBy: loggedUser.email
         }
 
         await addDoc(collection(db, "groups", group.id, "matches"), { ...match });
