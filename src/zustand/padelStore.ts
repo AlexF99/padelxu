@@ -59,7 +59,7 @@ type PadelActions = {
     fetchTeams: () => Promise<void>
     /* eslint-disable-next-line no-empty-pattern */
     setLoggedUser: ({ }: User) => void
-    signUserOut: () => void
+    resetStore: () => void
 }
 
 const initialStats = { id: "", name: "", wins: 0, gamesWon: 0, gamesPlayed: 0, matches: 0, ratio: '0', gamesRatio: '0' };
@@ -100,7 +100,7 @@ export const usePadelStore = create<PadelState & PadelActions>()(
             setLoggedUser: (loggedUser: User) => {
                 set((state: PadelState) => ({ ...state, loggedUser, isLoggedIn: true }));
             },
-            signUserOut: () => { set(initialState); },
+            resetStore: () => { set(initialState); },
             fetchPlayers: async () => {
                 if (!get().group.id) return;
                 const q = query(collection(db, "players"), where("group", "==", get().group.id));

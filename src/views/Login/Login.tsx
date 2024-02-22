@@ -1,9 +1,8 @@
-import { User, getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Box, Button, TextField } from "@mui/material";
 import { Route } from "../../router";
 import { useNavigate } from "react-router-dom";
-import { usePadelStore } from "../../zustand/padelStore";
 
 type Inputs = {
     email: string
@@ -13,7 +12,6 @@ type Inputs = {
 const Login = () => {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
-    const { setLoggedUser } = usePadelStore();
     const {
         register,
         handleSubmit,
@@ -25,8 +23,6 @@ const Login = () => {
 
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const user: User = userCredential.user;
-                setLoggedUser(user)
                 navigate(Route.HOME, { replace: true })
             })
             .catch((error) => {
@@ -43,9 +39,6 @@ const Login = () => {
                 // const credential = GoogleAuthProvider.credentialFromResult(result);
                 // const token = credential?.accessToken;
                 // The signed-in user info.
-                const user = result.user;
-                console.log(user);
-                setLoggedUser(user)
                 navigate(Route.HOME, { replace: true })
                 // IdP data available using getAdditionalUserInfo(result)
                 // ...

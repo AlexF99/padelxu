@@ -8,7 +8,7 @@ import GroupForm from '../../components/molecules/GroupForm/GroupForm';
 
 const Groups = () => {
 
-    const { loggedUser,isLoggedIn, groups, fetchGroups } = usePadelStore();
+    const { loggedUser, isLoggedIn, groups, fetchGroups } = usePadelStore();
     const navigate = useNavigate();
 
 

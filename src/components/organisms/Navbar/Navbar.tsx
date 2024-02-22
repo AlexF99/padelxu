@@ -20,7 +20,7 @@ const Navbar = () => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    const { group, signUserOut } = usePadelStore();
+    const { group } = usePadelStore();
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -36,7 +36,6 @@ const Navbar = () => {
         setAnchorElUser(null)
         const auth = getAuth();
         signOut(auth).then(() => {
-            signUserOut();
             navigate(Route.LOGIN)
         }).catch((error) => {
             console.log(error);
