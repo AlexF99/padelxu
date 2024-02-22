@@ -1,7 +1,7 @@
 import { User } from 'firebase/auth'
 import { collection, getDocs, or, orderBy, query, where } from 'firebase/firestore';
 import { create } from 'zustand'
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 import { persist } from 'zustand/middleware'
 import _ from 'lodash';
 
@@ -237,6 +237,9 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                 group: state.group,
                 loggedUser: state.loggedUser,
                 isLoggedIn: state.isLoggedIn,
+                isCreator: state.isCreator,
+                isManager: state.isManager,
+                isMember: state.isMember,
             }),
         },
     ),
