@@ -13,8 +13,6 @@ import { usePadelStore } from '../../../zustand/padelStore'
 
 const UserAvatar = (props: AvatarProps) => {
     const {
-        avatarImage,
-        avatarImageAlt,
         handleOpenUserMenu,
         handleCloseUserMenu,
         handleSignOut,
@@ -29,8 +27,8 @@ const UserAvatar = (props: AvatarProps) => {
             <Tooltip title="Log in or out">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                        alt={avatarImageAlt || 'user-avatar'}
-                        src={avatarImage || ''}
+                        alt={'avatar'}
+                        src={loggedUser.photoURL || ''}
                     />
                 </IconButton>
             </Tooltip>
