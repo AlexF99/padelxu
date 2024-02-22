@@ -26,6 +26,15 @@ const Groups = () => {
                     <Typography id="modal-modal-description">{g.name}</Typography>
                 </Box>
             ))}
+
+            <Typography variant='subtitle1'>Grupos que faço parte:</Typography>
+
+            {groups && !!loggedUser.email && groups.filter((g: Group) => g.createdBy !== loggedUser.email).map((g: Group) => (
+                <Box key={g.id} className="ArrayContainer" >
+                    <Typography id="modal-modal-description">{g.name}</Typography>
+                    <Typography id="modal-modal-description">{g.managers.includes(`${loggedUser.email}`) ? 'manager' : 'member'}</Typography>
+                </Box>
+            ))}
         </Box>
     )
 }
