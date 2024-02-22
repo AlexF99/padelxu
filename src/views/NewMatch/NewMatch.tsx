@@ -6,10 +6,10 @@ import { Route } from '../../router';
 import { useEffect } from 'react';
 
 const NewMatch = () => {
-    const { isLoggedIn, isMember, group, setGroup } = usePadelStore();
+    const { isLoggedIn, isMember, reviewPermissions } = usePadelStore();
 
     useEffect(() => {
-        setGroup(group)
+        reviewPermissions();
     }, [])
 
     return (

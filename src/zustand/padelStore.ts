@@ -54,6 +54,7 @@ type PadelActions = {
     fetchPlayers: () => Promise<void>
     fetchGroups: (userEmail: string | null) => Promise<void>
     setGroup: (group: Group) => void
+    reviewPermissions: () => void
     fetchMatches: () => Promise<void>
     fetchLeaderboard: () => Promise<void>
     fetchTeams: () => Promise<void>
@@ -101,8 +102,21 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                 set((state: PadelState) => ({ ...state, loggedUser, isLoggedIn: true }));
             },
             resetStore: () => { set(initialState); },
+            reviewPermissions: () => {
+                const userEmail = get().loggedUser.email;
+                const group = get().group;
+                const isCreator: boolean = get().isLoggedIn && (group.createdBy === userEmail);
+                const isManager: boolean = get().isLoggedIn && (isCreator || (!!userEmail && group.managers.includes(userEmail)));
+                const isMember: boolean = get().isLoggedIn && (isCreator || isManager || (!!userEmail && group.members.includes(userEmail)));
+                set((state: PadelState) => ({
+                    ...state,
+                    isCreator,
+                    isManager,
+                    isMember,
+                }))
+            },
             fetchPlayers: async () => {
-                if (!get().group.id) return;
+                if (!get().group.id.length) return;
                 const q = query(collection(db, "players"), where("group", "==", get().group.id));
                 const querySnapshot = await getDocs(q);
                 const updatedplayers: any = []
