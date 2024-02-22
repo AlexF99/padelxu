@@ -12,7 +12,7 @@ import { Route } from "../../router";
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const { isLoggedIn, isManager, isCreator, players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard } = usePadelStore();
+    const { isLoggedIn, isManager, isCreator, players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard, setGroup, group } = usePadelStore();
 
     const updatePlayers = async () => {
         setIsLoading(true);
@@ -21,6 +21,7 @@ const Players = () => {
     }
 
     useEffect(() => {
+        setGroup(group)
         if (players.length < 1)
             updatePlayers();
     }, [])

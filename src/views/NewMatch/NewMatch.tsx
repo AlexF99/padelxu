@@ -3,9 +3,14 @@ import MatchForm from '../../components/molecules/MatchForm/MatchForm';
 import { usePadelStore } from '../../zustand/padelStore';
 import { Link } from 'react-router-dom';
 import { Route } from '../../router';
+import { useEffect } from 'react';
 
 const NewMatch = () => {
-    const { isLoggedIn, isMember } = usePadelStore();
+    const { isLoggedIn, isMember, group, setGroup } = usePadelStore();
+
+    useEffect(() => {
+        setGroup(group)
+    }, [])
 
     return (
         <Box className="PageContainer">
