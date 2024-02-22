@@ -27,7 +27,7 @@ const Navbar = () => {
     const handleClose = () => setOpen(false);
 
     useEffect(() => {
-        if (group.id.length < 1 && location.pathname !== Route.LOGIN)
+        if (group.id.length < 1 && ![`${Route.LOGIN}`, `${Route.HOME}`, `${Route.GROUPS}`, `${Route.PROFILE}`].includes(location.pathname))
             setOpen(true)
     }, [location.pathname])
 

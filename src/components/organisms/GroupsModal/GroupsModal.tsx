@@ -7,6 +7,14 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const GroupsModal = (props: any) => {
     const { onClose } = props;
     const { isLoggedIn, loggedUser, group, groups, fetchGroups, setGroup, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams } = usePadelStore();
+    const emptyGroup: Group = {
+        id: "",
+        name: "Sem grupo",
+        createdBy: "",
+        visibility: "",
+        members: [],
+        managers: [],
+    }
 
     useEffect(() => {
         fetchGroups(loggedUser.email)
@@ -44,7 +52,7 @@ const GroupsModal = (props: any) => {
                     Selecione um grupo
                 </Typography>
             }
-            {groups && groups.map((g: Group) => (
+            {groups && [emptyGroup, ...groups].map((g: Group) => (
                 <Box key={g.id} className="ArrayContainer" onClick={() => onChangeGroup(g)} sx={{ bgcolor: group.id === g.id ? '#efefef' : "" }}>
                     <Typography id="modal-modal-description">{g.name}</Typography>
                     {group.id === g.id && <CheckCircleIcon />}

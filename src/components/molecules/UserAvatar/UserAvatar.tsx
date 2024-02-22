@@ -27,7 +27,7 @@ const UserAvatar = (props: AvatarProps) => {
             <Tooltip title="Log in or out">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                        alt={'avatar'}
+                        alt={'photo'}
                         src={loggedUser.photoURL || ''}
                     />
                 </IconButton>
