@@ -56,7 +56,7 @@ type PadelActions = {
     setGroup: (group: Group) => void
     reviewPermissions: () => void
     fetchMatches: () => Promise<void>
-    fetchLeaderboard: () => Promise<void>
+    fetchLeaderboard: (dateFrom?: Date, dateUntil?: Date) => Promise<void>
     fetchTeams: () => Promise<void>
     /* eslint-disable-next-line no-empty-pattern */
     setLoggedUser: ({ }: User) => void
@@ -176,7 +176,7 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                 const grouped = _.groupBy(updatedMatches, 'date')
                 set((state: PadelState) => ({ ...state, matches: grouped }));
             },
-            fetchLeaderboard: async () => {
+            fetchLeaderboard: async (dateFrom?: Date, dateUntil?: Date) => {
                 if (!get().group.id) return;
                 const playerq = query(collection(db, "players"), where("group", "==", get().group.id));
                 const playerQuerySnapshot = await getDocs(playerq);
@@ -185,7 +185,11 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                     playersMap[doc.id] = { ...initialStats, id: doc.id, name: doc.data().name }
                 });
 
-                const matchq = query(collection(db, "groups", get().group.id, "matches"));
+                const matchq = !!dateFrom && !!dateUntil
+                    ? query(collection(db, "groups", get().group.id, "matches"),
+                        where("date", "<=", dateUntil),
+                        where("date", ">=", dateFrom))
+                    : query(collection(db, "groups", get().group.id, "matches"));
                 const matchQuerySnapshot = await getDocs(matchq);
                 matchQuerySnapshot.forEach((doc) => {
                     const match = doc.data();

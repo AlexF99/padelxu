@@ -26,7 +26,7 @@ export default function PlayerInfo() {
 
     useEffect(() => {
         if (!group.id.length) return;
-        if (leaderboard.length < 1) refresh();
+        refresh();
         const foundPlayer = leaderboard.find((p: Stats) => p.id === id)
         setPlayer(foundPlayer)
         let newData: any = [];
@@ -63,7 +63,7 @@ export default function PlayerInfo() {
         })
 
         setData(newData)
-    }, [leaderboard])
+    }, [])
 
     return (
         <Box className="PageContainer">

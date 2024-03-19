@@ -9,6 +9,8 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase'
 import { usePadelStore } from './zustand/padelStore'
 import './App.css'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 function App() {
     const navigate = useNavigate()
@@ -34,12 +36,14 @@ function App() {
     return (
         <div className="App">
             <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <div className="AppContainer">
-                    <Navbar />
-                    <Outlet />
-                    <BottomNav />
-                </div>
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                    <CssBaseline />
+                    <div className="AppContainer">
+                        <Navbar />
+                        <Outlet />
+                        <BottomNav />
+                    </div>
+                </LocalizationProvider>
             </ThemeProvider>
         </div>
     )
