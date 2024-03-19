@@ -15,19 +15,12 @@ export default function PlayerInfo() {
     const { id } = useParams();
     const [player, setPlayer] = useState<Stats>()
     const [data, setData] = useState<Data[]>()
-    const { matches, leaderboard, fetchLeaderboard, fetchMatches, isLoading, setIsLoading, group } = usePadelStore();
-
+    const { fetchLeaderboard, fetchMatches, isLoading, setIsLoading, group } = usePadelStore();
     const refresh = async () => {
         setIsLoading(true)
-        await fetchMatches()
-        await fetchLeaderboard()
-        setIsLoading(false)
-    }
-
-    useEffect(() => {
-        if (!group.id.length) return;
-        refresh();
-        const foundPlayer = leaderboard.find((p: Stats) => p.id === id)
+        const matches = await fetchMatches()
+        const leaderboard = await fetchLeaderboard()
+        const foundPlayer = (leaderboard)?.find((p: Stats) => p.id === id)
         setPlayer(foundPlayer)
         let newData: any = [];
         Object.keys(matches).reverse().forEach(day => {
@@ -63,6 +56,13 @@ export default function PlayerInfo() {
         })
 
         setData(newData)
+        setIsLoading(false)
+    }
+
+    useEffect(() => {
+        if (!group.id.length) return;
+        refresh();
+
     }, [])
 
     return (

@@ -55,8 +55,8 @@ type PadelActions = {
     fetchGroups: (userEmail: string | null) => Promise<void>
     setGroup: (group: Group) => void
     reviewPermissions: () => void
-    fetchMatches: () => Promise<void>
-    fetchLeaderboard: (dateFrom?: Date, dateUntil?: Date) => Promise<void>
+    fetchMatches: () => Promise<any>
+    fetchLeaderboard: (dateFrom?: Date, dateUntil?: Date) => Promise<Stats[] | undefined>
     fetchTeams: () => Promise<void>
     /* eslint-disable-next-line no-empty-pattern */
     setLoggedUser: ({ }: User) => void
@@ -175,6 +175,7 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                 });
                 const grouped = _.groupBy(updatedMatches, 'date')
                 set((state: PadelState) => ({ ...state, matches: grouped }));
+                return grouped;
             },
             fetchLeaderboard: async (dateFrom?: Date, dateUntil?: Date) => {
                 if (!get().group.id) return;
@@ -216,6 +217,7 @@ export const usePadelStore = create<PadelState & PadelActions>()(
                     ...state,
                     leaderboard: updatedPlayers,
                 }));
+                return updatedPlayers;
             },
             fetchTeams: async () => {
                 if (!get().group.id) return;
