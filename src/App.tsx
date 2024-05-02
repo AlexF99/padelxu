@@ -11,6 +11,9 @@ import { usePadelStore } from './zustand/padelStore'
 import './App.css'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 function App() {
     const navigate = useNavigate()
@@ -35,16 +38,18 @@ function App() {
 
     return (
         <div className="App">
-            <ThemeProvider theme={theme}>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                    <CssBaseline />
-                    <div className="AppContainer">
-                        <Navbar />
-                        <Outlet />
-                        <BottomNav />
-                    </div>
-                </LocalizationProvider>
-            </ThemeProvider>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider theme={theme}>
+                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                        <CssBaseline />
+                        <div className="AppContainer">
+                            <Navbar />
+                            <Outlet />
+                            <BottomNav />
+                        </div>
+                    </LocalizationProvider>
+                </ThemeProvider>
+            </QueryClientProvider>
         </div>
     )
 }
