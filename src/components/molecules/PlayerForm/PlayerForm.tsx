@@ -4,13 +4,15 @@ import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { usePadelStore } from "../../../zustand/padelStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Inputs = {
     name: string
 }
 
 export default function PlayerForm() {
-    const { fetchLeaderboard, fetchPlayers, group } = usePadelStore();
+    const { group } = usePadelStore();
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -19,13 +21,15 @@ export default function PlayerForm() {
         formState: { errors },
     } = useForm<Inputs>();
 
+    const reloadPlayers = async () => {
+        queryClient.invalidateQueries({ queryKey: ['players'] });
+    }
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { name } = data;
         if (name.length < 1 || group.id.length < 1) return;
         await addDoc(collection(db, "players"), { group: group.id, name });
-        fetchPlayers()
-        fetchLeaderboard()
+        reloadPlayers();
         reset();
     }
 
@@ -38,7 +42,7 @@ export default function PlayerForm() {
                 </div>
                 <div style={{ display: "flex" }}>
                     <Button type="submit" variant="contained">add</Button>
-                    <Button type="button" onClick={fetchPlayers} color="success"><RefreshIcon /></Button>
+                    <Button type="button" onClick={reloadPlayers} color="success"><RefreshIcon /></Button>
                 </div>
             </form>
         </Box>

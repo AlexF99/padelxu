@@ -8,11 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { Route } from '../../router';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment, { Moment } from 'moment';
+import { fetchLeaderboard } from '../../api/api';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function Leaderboard() {
-    const { leaderboard, fetchLeaderboard, isLoading, setIsLoading } = usePadelStore();
+    const { group } = usePadelStore();
     const navigate = useNavigate();
-
+    const queryClient = useQueryClient();
 
     // date vars
     const [dateFrom, setDateFrom] = useState<Moment>(moment("01/01/2024 9:00", "M/D/YYYY H:mm"));
@@ -21,18 +23,18 @@ export default function Leaderboard() {
     const [months, setMonths] = useState<any>({});
     const monthsOfYear = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
+    const { data: leaderboard, isFetching } = useQuery({
+        queryKey: ['leaderboard'],
+        queryFn: () => fetchLeaderboard(group.id, dateFrom?.toDate(), dateUntil?.toDate()),
+    })
+
+    const updateLeaderboard = async () => {
+        queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
+    }
+
     useEffect(() => {
         updateLeaderboard();
     }, [dateFrom, dateUntil]);
-
-
-    const updateLeaderboard = async () => {
-        setIsLoading(true)
-        if (!!dateFrom && !!dateUntil)
-            await fetchLeaderboard(dateFrom?.toDate(), dateUntil?.toDate());
-        else await fetchLeaderboard();
-        setIsLoading(false)
-    }
 
     useEffect(() => {
         const monthsAdd: any = {
@@ -52,8 +54,6 @@ export default function Leaderboard() {
             monthsAdd[label] = monthAdd;
         }
         setMonths(monthsAdd)
-        if (leaderboard.length < 1)
-            updateLeaderboard()
     }, [])
 
     const onItemClick = (id: string) => {
@@ -91,7 +91,7 @@ export default function Leaderboard() {
                     ))}
                 </Select>
             </Box>
-            {isLoading
+            {isFetching
                 ? <CircularProgress color="success" />
                 : <StatsTable onItemClick={(id) => onItemClick(id)} items={leaderboard} reloadItems={updateLeaderboard}></StatsTable>
             }

@@ -149,7 +149,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 interface TableProps {
     reloadItems: () => Promise<void>,
     onItemClick: (id: string) => void,
-    items: Stats[]
+    items: Stats[] | undefined
 }
 
 export default function StatsTable(props: TableProps) {
@@ -167,7 +167,7 @@ export default function StatsTable(props: TableProps) {
         setOrderBy(property);
     };
 
-    const visibleRows = items.length ? stableSort(items, getComparator(order, orderBy)) : [];
+    const visibleRows = items?.length ? stableSort(items, getComparator(order, orderBy)) : [];
 
     return (
         <Paper sx={{ width: '100%', mb: 2 }}>
@@ -183,7 +183,7 @@ export default function StatsTable(props: TableProps) {
                         order={order}
                         orderBy={orderBy}
                         onRequestSort={handleRequestSort}
-                        rowCount={items.length}
+                        rowCount={items?.length ?? 0}
                     />
                     <TableBody>
                         {visibleRows.map((row, index) => {

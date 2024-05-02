@@ -1,20 +1,21 @@
 import { Box, Typography } from '@mui/material'
-import { useEffect } from 'react'
 import { Group, usePadelStore } from '../../zustand/padelStore';
 import { useNavigate } from 'react-router-dom';
 import { Route } from '../../router';
 import GroupForm from '../../components/molecules/GroupForm/GroupForm';
+import { fetchGroups } from '../../api/api';
+import { useQuery } from '@tanstack/react-query';
 
 
 const Groups = () => {
 
-    const { loggedUser, isLoggedIn, groups, fetchGroups } = usePadelStore();
+    const { loggedUser, isLoggedIn } = usePadelStore();
     const navigate = useNavigate();
 
-
-    useEffect(() => {
-        fetchGroups(loggedUser.email)
-    }, [])
+    const { data: groups } = useQuery({
+        queryKey: ['groups'],
+        queryFn: () => fetchGroups(loggedUser.email),
+    })
 
     return (
         <Box className="PageContainer">

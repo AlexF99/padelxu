@@ -157,5 +157,43 @@ const fetchTeams = async (groupId: string) => {
     return Object.keys(tsMap).map(k => tsMap[k]);
 };
 
+const fetchPlayerInfo = async (groupId: string, playerId: string) => {
+    const matches = await fetchMatches(groupId);
+    const leaderboard = await fetchLeaderboard(groupId);
+    let newData: any = [];
+    Object.keys(matches).reverse().forEach(day => {
+        const d = matches[day].reduce((acc: any, match: any) => {
+            let won = false;
+            let played = true;
+            let gamesPlayed = 0;
+            let gamesWon = 0;
+            if (match.teamOne.players.find((p: any) => p.id === playerId)) {
+                won = match.teamOne.points > match.teamTwo.points
+                gamesWon += match.teamOne.points;
+            } else if (match.teamTwo.players.find((p: any) => p.id === playerId)) {
+                won = match.teamTwo.points > match.teamOne.points;
+                gamesWon += match.teamTwo.points;
+            } else played = false;
+
+            if (played) gamesPlayed += match.teamOne.points + match.teamTwo.points;
+            return {
+                ...acc,
+                m: acc.m + (played ? 1 : 0),
+                wins: acc.wins + (won ? 1 : 0),
+                gamesWon: acc.gamesWon + gamesWon,
+                gamesPlayed: acc.gamesPlayed + gamesPlayed,
+                ratio: (acc.wins + (won ? 1 : 0)) / (acc.m + (played ? 1 : 0)),
+                gamesRatio: (acc.gamesWon + gamesWon) / (acc.gamesPlayed + gamesPlayed)
+            }
+        }, { m: 0, wins: 0, gamesWon: 0, gamesPlayed: 0, ratio: 0, gamesRatio: 0, accWinRatio: 0, date: day })
+
+        const accData = newData.reduce((acc: any, dayData: any) => ({ wins: acc.wins + dayData.wins, m: acc.m + dayData.m, gamesWon: acc.gamesWon + dayData.gamesWon, gamesPlayed: acc.gamesPlayed + dayData.gamesPlayed }),
+            { wins: d.wins, m: d.m, gamesWon: d.gamesWon, gamesPlayed: d.gamesPlayed })
+
+        newData.push({ ...d, accWinRatio: accData.wins / accData.m, accGamesRatio: accData.gamesWon / accData.gamesPlayed })
+    })
+    return { data: newData, player: leaderboard?.find((p: Stats) => p.id === playerId) }
+};
+
 export type { Stats, Group, Player, Teams }
-export { fetchGroups, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams };
+export { fetchGroups, fetchLeaderboard, fetchMatches, fetchPlayers, fetchTeams, fetchPlayerInfo };

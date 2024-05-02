@@ -1,20 +1,28 @@
 import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle, Grid, IconButton, Typography, useTheme } from '@mui/material'
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from '../../zustand/padelStore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Route } from '../../router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchMatches } from '../../api/api';
 
 const Matches = () => {
     const [open, setOpen] = useState(false);
     const [matchDelete, setMatchDelete] = useState("");
     const theme = useTheme();
+    const queryClient = useQueryClient()
 
-    const { isLoggedIn, isManager, matches, fetchMatches, isLoading, setIsLoading, fetchLeaderboard, group } = usePadelStore();
+    const { group, isLoggedIn, isManager } = usePadelStore();
+
+    const { data: matches, isFetching } = useQuery({
+        queryKey: ['matches'],
+        queryFn: () => fetchMatches(group.id),
+    })
 
     const handleClickOpen = (matchId: string) => {
         setOpen(true);
@@ -25,22 +33,14 @@ const Matches = () => {
         setOpen(false);
     };
 
-    const getMatches = async () => {
-        setIsLoading(true);
-        await fetchMatches();
-        setIsLoading(false);
+    const getMatches = () => {
+        queryClient.invalidateQueries({ queryKey: ['matches'] })
     }
-
-    useEffect(() => {
-        if (Object.keys(matches).length < 1)
-            getMatches();
-    }, [])
 
     const handleAgree = async () => {
         if (!isManager) return;
         await deleteDoc(doc(db, "groups", group.id, "matches", matchDelete));
-        await getMatches();
-        fetchLeaderboard();
+        getMatches();
         handleClose();
     }
 
@@ -72,7 +72,7 @@ const Matches = () => {
                 }
                 <Button type="button" color='success' onClick={getMatches}><RefreshIcon /></Button>
             </div>
-            {isLoading
+            {isFetching
                 ? <CircularProgress color="success" />
                 : Object.keys(matches).map((date: any) => (
                     <Fragment key={date}>

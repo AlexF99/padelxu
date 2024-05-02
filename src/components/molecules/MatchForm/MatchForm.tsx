@@ -15,7 +15,7 @@ export default function MatchForm() {
     const [points, setPoints] = useState<{ 0: number, 1: number }>({ 0: 0, 1: 0 })
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
-    const { fetchMatches, fetchLeaderboard, group, loggedUser } = usePadelStore();
+    const { group, loggedUser } = usePadelStore();
 
     const navigate = useNavigate();
 
@@ -69,8 +69,6 @@ export default function MatchForm() {
         }
 
         await addDoc(collection(db, "groups", group.id, "matches"), { ...match });
-        fetchMatches();
-        fetchLeaderboard();
         navigate(Route.MATCHES)
     }
 

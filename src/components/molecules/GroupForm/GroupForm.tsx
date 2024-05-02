@@ -4,13 +4,14 @@ import { db } from "../../../firebase";
 import { SubmitHandler, useForm } from "react-hook-form";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { usePadelStore } from "../../../zustand/padelStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Inputs = {
     name: string
 }
 
 export default function GroupForm() {
-    const { fetchGroups, loggedUser } = usePadelStore();
+    const { loggedUser } = usePadelStore();
 
     const {
         register,
@@ -19,6 +20,11 @@ export default function GroupForm() {
         formState: { errors },
     } = useForm<Inputs>();
 
+    const queryClient = useQueryClient();
+
+    const reloadGroups = async () => {
+        queryClient.invalidateQueries({ queryKey: ['groups'] })
+    }
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { name } = data;
@@ -27,7 +33,7 @@ export default function GroupForm() {
         const managers: any = [];
         managers.push(loggedUser.email)
         await addDoc(collection(db, "groups"), { name, createdBy: loggedUser.email, visibility: "private", members, managers });
-        fetchGroups(loggedUser.email);
+        reloadGroups();
         reset();
     }
 
@@ -40,7 +46,7 @@ export default function GroupForm() {
                 </div>
                 <div style={{ display: "flex" }}>
                     <Button type="submit" variant="contained">add</Button>
-                    <Button type="button" onClick={() => fetchGroups(loggedUser.email)} color="success"><RefreshIcon /></Button>
+                    <Button type="button" onClick={() => reloadGroups()} color="success"><RefreshIcon /></Button>
                 </div>
             </form>
         </Box>

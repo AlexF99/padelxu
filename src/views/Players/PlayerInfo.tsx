@@ -1,89 +1,45 @@
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { Stats, usePadelStore } from "../../zustand/padelStore";
-import { useEffect, useState } from "react";
+import { usePadelStore } from "../../zustand/padelStore";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import RefreshIcon from '@mui/icons-material/Refresh';
-
-type Data = {
-    id: string,
-    name: string
-}
+import { fetchPlayerInfo } from "../../api/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 export default function PlayerInfo() {
     const { id } = useParams();
-    const [player, setPlayer] = useState<Stats>()
-    const [data, setData] = useState<Data[]>()
-    const { fetchLeaderboard, fetchMatches, isLoading, setIsLoading, group } = usePadelStore();
+    const { group } = usePadelStore();
+    const queryClient = useQueryClient();
+
+    const { data, isFetching } = useQuery({
+        queryKey: ['playerinfo'],
+        queryFn: () => fetchPlayerInfo(group.id, id ?? ''),
+    })
+
     const refresh = async () => {
-        setIsLoading(true)
-        const matches = await fetchMatches()
-        const leaderboard = await fetchLeaderboard()
-        const foundPlayer = (leaderboard)?.find((p: Stats) => p.id === id)
-        setPlayer(foundPlayer)
-        let newData: any = [];
-        Object.keys(matches).reverse().forEach(day => {
-            const d = matches[day].reduce((acc: any, match: any) => {
-                let won = false;
-                let played = true;
-                let gamesPlayed = 0;
-                let gamesWon = 0;
-                if (match.teamOne.players.find((p: any) => p.id === id)) {
-                    won = match.teamOne.points > match.teamTwo.points
-                    gamesWon += match.teamOne.points;
-                } else if (match.teamTwo.players.find((p: any) => p.id === id)) {
-                    won = match.teamTwo.points > match.teamOne.points;
-                    gamesWon += match.teamTwo.points;
-                } else played = false;
-
-                if (played) gamesPlayed += match.teamOne.points + match.teamTwo.points;
-                return {
-                    ...acc,
-                    m: acc.m + (played ? 1 : 0),
-                    wins: acc.wins + (won ? 1 : 0),
-                    gamesWon: acc.gamesWon + gamesWon,
-                    gamesPlayed: acc.gamesPlayed + gamesPlayed,
-                    ratio: (acc.wins + (won ? 1 : 0)) / (acc.m + (played ? 1 : 0)),
-                    gamesRatio: (acc.gamesWon + gamesWon) / (acc.gamesPlayed + gamesPlayed)
-                }
-            }, { m: 0, wins: 0, gamesWon: 0, gamesPlayed: 0, ratio: 0, gamesRatio: 0, accWinRatio: 0, date: day })
-
-            const accData = newData.reduce((acc: any, dayData: any) => ({ wins: acc.wins + dayData.wins, m: acc.m + dayData.m, gamesWon: acc.gamesWon + dayData.gamesWon, gamesPlayed: acc.gamesPlayed + dayData.gamesPlayed }),
-                { wins: d.wins, m: d.m, gamesWon: d.gamesWon, gamesPlayed: d.gamesPlayed })
-
-            newData.push({ ...d, accWinRatio: accData.wins / accData.m, accGamesRatio: accData.gamesWon / accData.gamesPlayed })
-        })
-
-        setData(newData)
-        setIsLoading(false)
+        queryClient.invalidateQueries({ queryKey: ['playerinfo'] })
     }
-
-    useEffect(() => {
-        if (!group.id.length) return;
-        refresh();
-
-    }, [])
 
     return (
         <Box className="PageContainer">
-            {group.id.length ? isLoading
+            {group.id.length ? isFetching
                 ? <CircularProgress color="success" />
                 : <>
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <Typography variant="h3">{player?.name}</Typography>
+                        <Typography variant="h3">{data?.player?.name}</Typography>
                         <Button type="button" color='success' onClick={refresh}><RefreshIcon /></Button>
                     </Box>
                     <Box className="ArrayContainer">
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <Typography variant="body1">Partidas: {player?.matches}</Typography>
-                                <Typography variant="body1">Vitórias: {player?.wins}</Typography>
-                                <Typography variant="body1">games ganhos: {player?.gamesWon}</Typography>
+                                <Typography variant="body1">Partidas: {data?.player?.matches}</Typography>
+                                <Typography variant="body1">Vitórias: {data?.player?.wins}</Typography>
+                                <Typography variant="body1">games ganhos: {data?.player?.gamesWon}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography variant="body1">Aproveitamento: {player?.ratio}</Typography>
-                                <Typography variant="body1">Aprov. games: {player?.gamesRatio}</Typography>
+                                <Typography variant="body1">Aproveitamento: {data?.player?.ratio}</Typography>
+                                <Typography variant="body1">Aprov. games: {data?.player?.gamesRatio}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
@@ -91,7 +47,7 @@ export default function PlayerInfo() {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
-                                <LineChart data={data}>
+                                <LineChart data={data?.data}>
                                     <Line type="monotone" dataKey="accWinRatio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />
@@ -101,7 +57,7 @@ export default function PlayerInfo() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
-                                <BarChart data={data}>
+                                <BarChart data={data?.data}>
                                     <Bar type="monotone" dataKey="ratio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />
@@ -115,7 +71,7 @@ export default function PlayerInfo() {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
-                                <LineChart data={data}>
+                                <LineChart data={data?.data}>
                                     <Line type="monotone" dataKey="accGamesRatio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />
@@ -125,7 +81,7 @@ export default function PlayerInfo() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <ResponsiveContainer aspect={1.2} maxHeight={300}>
-                                <BarChart data={data}>
+                                <BarChart data={data?.data}>
                                     <Bar type="monotone" dataKey="gamesRatio" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey={"date"} />

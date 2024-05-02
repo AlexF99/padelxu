@@ -7,23 +7,27 @@ import CloseIcon from '@mui/icons-material/Close';
 import { usePadelStore } from "../../zustand/padelStore";
 import { Link } from "react-router-dom";
 import { Route } from "../../router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchPlayers } from "../../api/api";
 
 
 const Players = () => {
     const [open, setOpen] = useState(false);
     const [playerDelete, setPlayerDelete] = useState("");
-    const { isLoggedIn, isManager, isCreator, players, fetchPlayers, isLoading, setIsLoading, fetchLeaderboard, reviewPermissions } = usePadelStore();
+    const { isLoggedIn, isManager, isCreator, reviewPermissions, group } = usePadelStore();
+    const queryClient = useQueryClient();
+
+    const { data: players, isFetching } = useQuery({
+        queryKey: ['players'],
+        queryFn: () => fetchPlayers(group.id),
+    })
 
     const updatePlayers = async () => {
-        setIsLoading(true);
-        await fetchPlayers();
-        setIsLoading(false);
+        queryClient.invalidateQueries({ queryKey: ['players'] })
     }
 
     useEffect(() => {
         reviewPermissions();
-        if (players.length < 1)
-            updatePlayers();
     }, [])
 
     const handleClickOpen = (matchId: string) => {
@@ -38,7 +42,6 @@ const Players = () => {
     const handleAgree = async () => {
         await deleteDoc(doc(db, "players", playerDelete));
         await updatePlayers();
-        fetchLeaderboard();
         handleClose();
     }
 
@@ -69,7 +72,7 @@ const Players = () => {
                 isManager ? <PlayerForm /> :
                     <div>É necessário ser gerenciador do grupo para adicionar jogadores</div>
             }
-            {isLoading
+            {isFetching
                 ? <CircularProgress color="success" />
                 : players && players.map((item: any) => (
                     <Box key={item.id} className="ArrayContainer">
