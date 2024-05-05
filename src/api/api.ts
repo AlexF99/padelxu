@@ -125,8 +125,8 @@ const fetchLeaderboard = async (groupId: string, dateFrom?: Date, dateUntil?: Da
     Object.keys(playersMap).forEach(key => {
         playersMap[key] = {
             ...playersMap[key],
-            ratio: playersMap[key].matches > 0 ? (playersMap[key].wins / playersMap[key].matches).toFixed(2) : '0',
-            gamesRatio: playersMap[key].matches > 0 ? (playersMap[key].gamesWon / playersMap[key].gamesPlayed).toFixed(2) : '0'
+            ratio: playersMap[key].matches > 0 ? (100 * playersMap[key].wins / playersMap[key].matches).toFixed(2) : '0',
+            gamesRatio: playersMap[key].matches > 0 ? (100 * playersMap[key].gamesWon / playersMap[key].gamesPlayed).toFixed(2) : '0'
         }
         updatedPlayers.push(playersMap[key])
     });
@@ -154,8 +154,8 @@ const fetchTeams = async (groupId: string) => {
     Object.keys(tsMap).forEach(key => {
         tsMap[key] = {
             ...tsMap[key],
-            ratio: tsMap[key].matches > 0 ? (tsMap[key].wins / tsMap[key].matches).toFixed(2) : '0',
-            gamesRatio: tsMap[key].matches > 0 ? (tsMap[key].gamesWon / tsMap[key].gamesPlayed).toFixed(2) : '0'
+            ratio: tsMap[key].matches > 0 ? (100 * tsMap[key].wins / tsMap[key].matches).toFixed(2) : '0',
+            gamesRatio: tsMap[key].matches > 0 ? (100 * tsMap[key].gamesWon / tsMap[key].gamesPlayed).toFixed(2) : '0'
         }
     })
     return Object.keys(tsMap).map(k => tsMap[k]);
