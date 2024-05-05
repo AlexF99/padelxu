@@ -41,7 +41,7 @@ export default function GroupForm() {
         <Box>
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
-                    <TextField id="outlined-basic" color="primary" label="Nome" variant="filled"{...register("name", { required: true })} />
+                    <TextField id="outlined-basic" color="primary" label="Nome" variant="filled" {...register("name", { required: true })} />
                     <Typography>{errors.name && <span>Campo obrigatório</span>}</Typography>
                 </div>
                 <div style={{ display: "flex" }}>

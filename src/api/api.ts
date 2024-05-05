@@ -78,9 +78,13 @@ const fetchGroups = async (userEmail: string | null) => {
     return updatedGroups;
 };
 
-const fetchMatches: (groupId: string) => Promise<any> = async (groupId: string) => {
+const fetchMatches: (groupId: string, dateFrom?: Date, dateUntil?: Date) => Promise<any> = async (groupId: string, dateFrom?: Date, dateUntil?: Date) => {
     if (!groupId) return;
-    const q = query(collection(db, "groups", groupId, "matches"), orderBy("date", "desc"));
+    const q = !!dateFrom && !!dateUntil
+        ? query(collection(db, "groups", groupId, "matches"),
+            where("date", "<=", dateUntil),
+            where("date", ">=", dateFrom), orderBy('date', 'desc'))
+        : query(collection(db, "groups", groupId, "matches"), orderBy("date", "desc"));
     const querySnapshot = await getDocs(q);
     const updatedMatches: any = []
     querySnapshot.forEach((doc) => {
@@ -157,9 +161,9 @@ const fetchTeams = async (groupId: string) => {
     return Object.keys(tsMap).map(k => tsMap[k]);
 };
 
-const fetchPlayerInfo = async (groupId: string, playerId: string) => {
-    const matches = await fetchMatches(groupId);
-    const leaderboard = await fetchLeaderboard(groupId);
+const fetchPlayerInfo = async (groupId: string, playerId: string, dateFrom?: Date, dateUntil?: Date) => {
+    const matches = await fetchMatches(groupId, dateFrom, dateUntil);
+    const leaderboard = await fetchLeaderboard(groupId, dateFrom, dateUntil);
     let newData: any = [];
     Object.keys(matches).reverse().forEach(day => {
         const d = matches[day].reduce((acc: any, match: any) => {
