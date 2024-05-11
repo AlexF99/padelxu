@@ -16,12 +16,11 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
             end: moment()
         }
     });
-    const monthsOfYear = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
-
+    
     const { control, reset, getValues } = useFormContext();
-
-
+    
     useEffect(() => {
+        const monthsOfYear = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
         const monthsAdd: any = {};
         for (let i = 0; i < 5; i++) {
             const current = moment().year(moment().year()).month(moment().month() - i)
