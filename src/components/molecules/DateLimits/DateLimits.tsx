@@ -16,9 +16,9 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
             end: moment()
         }
     });
-    
+
     const { control, reset, getValues } = useFormContext();
-    
+
     useEffect(() => {
         const monthsOfYear = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
         const monthsAdd: any = {};
@@ -35,9 +35,9 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
         setMonths({ ...months, ...monthsAdd })
     }, [])
 
-    const handleMonthChange = (event: any) => {
-        const { value } = event.target;
-        reset({ dateFrom: months[value].start, dateUntil: months[value].end, month: getValues('month') })
+    const handleMonthChange = () => {
+        const month = getValues('month');
+        reset({ dateFrom: months[month].start, dateUntil: months[month].end, month: getValues('month') })
     }
 
     return (
@@ -77,17 +77,16 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
                     onChange={(e) => {
                         e.preventDefault();
                         field.onChange(e);
-                        handleMonthChange(e);
                     }}
                 >
                     {Object.keys(months).map(m => (
                         <MenuItem key={m} value={m}>{m}</MenuItem>
                     ))}
                 </Select>)} />
-            <Button type="button" variant="contained" onClick={() => onSubmit()}>
+            <Button type="button" variant="contained" onClick={() => { onSubmit(); handleMonthChange(); }}>
                 aplicar
             </Button>
 
-        </Box>
+        </Box >
     )
 }
