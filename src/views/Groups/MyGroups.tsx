@@ -13,7 +13,7 @@ const Groups = () => {
     const navigate = useNavigate();
 
     const { data: groups } = useQuery({
-        queryKey: ['groups'],
+        queryKey: ['groups', { user: loggedUser.email }],
         queryFn: () => fetchGroups(loggedUser.email),
     })
 

@@ -41,7 +41,7 @@ export default function Leaderboard() {
     });
 
     const { data: leaderboard, isFetching } = useQuery({
-        queryKey: ['leaderboard', { df: form.getValues('dateFrom').toDate(), du: form.getValues('dateUntil').toDate() }],
+        queryKey: ['leaderboard', { df: form.getValues('dateFrom').toDate(), du: form.getValues('dateUntil').toDate(), groupId: group.id }],
         queryFn: () => fetchLeaderboard(group.id, form.getValues('dateFrom').toDate(), form.getValues('dateUntil').toDate()),
     })
 

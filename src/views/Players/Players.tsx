@@ -18,7 +18,7 @@ const Players = () => {
     const queryClient = useQueryClient();
 
     const { data: players, isFetching } = useQuery({
-        queryKey: ['players'],
+        queryKey: ['players', { groupId: group.id }],
         queryFn: () => fetchPlayers(group.id),
     })
 

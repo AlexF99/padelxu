@@ -11,7 +11,7 @@ export default function Teams() {
     const { group } = usePadelStore()
 
     const { data: teams, isFetching } = useQuery({
-        queryKey: ['teams'],
+        queryKey: ['teams', { groupId: group.id }],
         queryFn: () => fetchTeams(group.id),
     })
 

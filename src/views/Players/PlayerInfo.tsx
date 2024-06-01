@@ -31,7 +31,7 @@ export default function PlayerInfo() {
     });
 
     const { data, isFetching } = useQuery({
-        queryKey: ['playerinfo', { df: form.getValues('dateFrom').toDate(), du: form.getValues('dateUntil').toDate() }],
+        queryKey: ['playerinfo', { df: form.getValues('dateFrom').toDate(), du: form.getValues('dateUntil').toDate(), groupId: group.id }],
         queryFn: () => fetchPlayerInfo(group.id, id ?? '', form.getValues('dateFrom').toDate(), form.getValues('dateUntil').toDate()),
     })
 

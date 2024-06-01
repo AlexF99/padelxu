@@ -3,11 +3,12 @@ import { Group, usePadelStore } from "../../../zustand/padelStore";
 import GroupForm from "../../molecules/GroupForm/GroupForm";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { fetchGroups } from "../../../api/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const GroupsModal = (props: any) => {
-    const { onClose } = props;
     const { isLoggedIn, loggedUser, group, setGroup } = usePadelStore();
+    const queryClient = useQueryClient();
+    const { onClose } = props;
     const emptyGroup: Group = {
         id: "",
         name: "Sem grupo",
@@ -18,12 +19,13 @@ const GroupsModal = (props: any) => {
     }
 
     const { data: groups } = useQuery({
-        queryKey: ['groups'],
+        queryKey: ['groups', { user: loggedUser.email }],
         queryFn: () => fetchGroups(loggedUser.email),
     })
 
     const onChangeGroup = (group: Group) => {
         setGroup(group);
+        queryClient.invalidateQueries();
         onClose();
     }
 

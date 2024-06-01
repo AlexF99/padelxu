@@ -20,7 +20,7 @@ const Matches = () => {
     const { group, isLoggedIn, isManager } = usePadelStore();
 
     const { data: matches, isFetching } = useQuery({
-        queryKey: ['matches'],
+        queryKey: ['matches', { groupId: group.id }],
         queryFn: () => fetchMatches(group.id),
     })
 
