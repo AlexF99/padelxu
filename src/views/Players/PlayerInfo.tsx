@@ -5,46 +5,27 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAx
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { fetchPlayerInfo } from "../../api/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import moment, { Moment } from "moment";
-import { Form } from "../../components/molecules/Form/Form";
-import DateLimits from "../../components/molecules/DateLimits/DateLimits";
-
-type Inputs = {
-    dateFrom: Moment,
-    dateUntil: Moment,
-    month: string,
-}
+import { DateLimits } from "../../components/molecules/DateLimits/DateLimits";
+import { useFilter } from "../../hooks/useFilter";
 
 export default function PlayerInfo() {
     const { id } = useParams();
     const { group } = usePadelStore();
     const queryClient = useQueryClient();
-
-    const form = useForm<Inputs>({
-        defaultValues: {
-            dateFrom: moment("01/01/2024 9:00", "M/D/YYYY H:mm"),
-            dateUntil: moment(),
-            month: 'tudo'
-        },
-        shouldUnregister: false
-    });
+    const { filterData, setFilterData } = useFilter();
 
     const { data, isFetching } = useQuery({
-        queryKey: ['playerinfo', { df: form.getValues('dateFrom').toDate(), du: form.getValues('dateUntil').toDate(), groupId: group.id }],
-        queryFn: () => fetchPlayerInfo(group.id, id ?? '', form.getValues('dateFrom').toDate(), form.getValues('dateUntil').toDate()),
+        queryKey: ['playerinfo', { groupId: group.id, id, ...filterData }],
+        queryFn: () => fetchPlayerInfo(group.id, id ?? '', filterData),
     })
 
     const refresh = async () => {
         queryClient.invalidateQueries({ queryKey: ['playerinfo'] })
     }
-    const onSubmit = form.handleSubmit(() => { refresh(); });
 
     return (
         <Box className="PageContainer">
-            <Form form={form}>
-                <DateLimits onSubmit={onSubmit} />
-            </Form>
+            <DateLimits filterData={filterData} setFilterData={setFilterData} />
             {group.id.length ? isFetching
                 ? <CircularProgress color="success" />
                 : <>

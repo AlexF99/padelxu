@@ -1,6 +1,7 @@
 import { collection, getDocs, or, orderBy, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import _ from 'lodash';
+import { Filter } from "../types/types";
 
 type Group = {
     id: string,
@@ -95,11 +96,15 @@ const fetchMatches: (groupId: string, dateFrom?: Date, dateUntil?: Date) => Prom
     return grouped;
 };
 
-const fetchLeaderboard = async (groupId: string, dateFrom?: Date, dateUntil?: Date) => {
+const fetchLeaderboard = async (groupId: string, filterData: Filter) => {
     if (!groupId) return;
+
+    const { dateFrom, dateUntil } = filterData;
+
     const playerq = query(collection(db, "players"), where("group", "==", groupId));
     const playerQuerySnapshot = await getDocs(playerq);
     const playersMap: any = {};
+    
     playerQuerySnapshot.forEach((doc) => {
         playersMap[doc.id] = { ...initialStats, id: doc.id, name: doc.data().name }
     });
@@ -161,10 +166,14 @@ const fetchTeams = async (groupId: string) => {
     return Object.keys(tsMap).map(k => tsMap[k]);
 };
 
-const fetchPlayerInfo = async (groupId: string, playerId: string, dateFrom?: Date, dateUntil?: Date) => {
+const fetchPlayerInfo = async (groupId: string, playerId: string, filterData: Filter) => {
+    const { dateFrom, dateUntil } = filterData;
+
     const matches = await fetchMatches(groupId, dateFrom, dateUntil);
-    const leaderboard = await fetchLeaderboard(groupId, dateFrom, dateUntil);
+    const leaderboard = await fetchLeaderboard(groupId, { dateFrom, dateUntil });
+
     let newData: any = [];
+
     Object.keys(matches).reverse().forEach(day => {
         const d = matches[day].reduce((acc: any, match: any) => {
             let won = false;

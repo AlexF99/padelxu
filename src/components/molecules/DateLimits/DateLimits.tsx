@@ -1,23 +1,32 @@
 import { Box, Button, MenuItem, Select } from "@mui/material";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers";
-import { useEffect, useState } from "react";
-import moment from "moment";
+import { FC, useEffect, useState } from "react";
+import moment, { Moment } from "moment";
+import { Filter, FilterForm } from "../../../types/types";
 
-type DateLimitProps = {
-    onSubmit: any
+type FilterDrawerProps = {
+    filterData: Filter
+    setFilterData: (filter: Filter) => void,
 }
 
-export default function DateLimits({ onSubmit }: DateLimitProps) {
+const DateLimits: FC<FilterDrawerProps> = ({ setFilterData, filterData }) => {
+    const form = useForm<FilterForm>({
+        defaultValues: {
+            month: "tudo",
+            dateFrom: moment("01/01/2024 9:00", "M/D/YYYY H:mm"),
+            dateUntil: moment()
+        }, shouldUnregister: false
+    });
 
-    const [months, setMonths] = useState<any>({
+    const [months, setMonths] = useState<Record<string, Record<string, Moment>>>({
         "tudo": {
             start: moment("01/01/2024 9:00", "M/D/YYYY H:mm"),
             end: moment()
         }
     });
 
-    const { control, reset, getValues } = useFormContext();
+    const { control } = form;
 
     useEffect(() => {
         const monthsOfYear = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
@@ -26,7 +35,7 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
             const current = moment().year(moment().year()).month(moment().month() - i)
             const currentCopy = moment(current);
             const label = monthsOfYear[current.get('month')] + current.get("year");
-            const monthAdd = {
+            const monthAdd: { start: Moment, end: Moment } = {
                 start: current.date(current.startOf('month').date()),
                 end: currentCopy.date(currentCopy.endOf('month').date())
             }
@@ -35,10 +44,20 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
         setMonths({ ...months, ...monthsAdd })
     }, [])
 
-    const handleMonthChange = () => {
-        const month = getValues('month');
-        reset({ dateFrom: months[month].start, dateUntil: months[month].end, month: getValues('month') })
-    }
+    const onSubmit = form.handleSubmit((formData: FilterForm) => {
+        const m = formData.month;
+        const filterData: Filter = {
+            ...formData,
+            dateFrom: formData.dateFrom?.toDate(),
+            dateUntil: formData.dateUntil?.toDate()
+        };
+        if (form.getFieldState('month').isDirty) {
+            filterData.dateFrom = m ? months[m]?.start.toDate() : undefined;
+            filterData.dateUntil = m ? months[m]?.end.toDate() : undefined;
+        }
+        form.reset(formData);
+        setFilterData(filterData);
+    });
 
     return (
         <Box style={{ display: 'flex', justifyContent: 'space-evenly' }}>
@@ -83,10 +102,12 @@ export default function DateLimits({ onSubmit }: DateLimitProps) {
                         <MenuItem key={m} value={m}>{m}</MenuItem>
                     ))}
                 </Select>)} />
-            <Button type="button" variant="contained" onClick={() => { onSubmit(); handleMonthChange(); }}>
+            <Button variant="contained" onClick={onSubmit}>
                 aplicar
             </Button>
 
         </Box >
     )
 }
+
+export { DateLimits };
