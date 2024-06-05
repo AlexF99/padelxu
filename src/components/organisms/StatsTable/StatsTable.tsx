@@ -156,7 +156,7 @@ export default function StatsTable(props: TableProps) {
     const { items, reloadItems, onItemClick } = props;
 
     const [order, setOrder] = useState<Order>('desc');
-    const [orderBy, setOrderBy] = useState<keyof Stats>('wins');
+    const [orderBy, setOrderBy] = useState<keyof Stats>('ratio');
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
