@@ -102,7 +102,7 @@ const GroupSettings = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant='h4'>Members</Typography>
-                        <TextField id="outlined-basic" color="primary" label="Nome do membro" variant="filled"
+                        <TextField id="outlined-basic" color="primary" label="e-mail do membro" variant="filled"
                             sx={{ backgroundColor: "#878787" }} {...register("memberEmail", { required: true })} />
                         <Button type="button" variant="contained" onClick={() => addPerson(getValues('memberEmail'), 'members')}>add</Button>
 
@@ -118,7 +118,7 @@ const GroupSettings = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant='h4'>Managers</Typography>
-                        <TextField id="outlined-basic" color="primary" label="Nome do manager" variant="filled"
+                        <TextField id="outlined-basic" color="primary" label="e-mail do manager" variant="filled"
                             sx={{ backgroundColor: "#878787" }} {...register("managerEmail", { required: true })} />
                         <Button type="button" variant="contained" onClick={() => addPerson(getValues('managerEmail'), 'managers')}>add</Button>
 

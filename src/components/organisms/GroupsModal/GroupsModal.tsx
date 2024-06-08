@@ -4,6 +4,7 @@ import GroupForm from "../../molecules/GroupForm/GroupForm";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { fetchGroups } from "../../../api/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 const GroupsModal = (props: any) => {
     const { isLoggedIn, loggedUser, group, setGroup } = usePadelStore();
@@ -23,11 +24,9 @@ const GroupsModal = (props: any) => {
         queryFn: () => fetchGroups(loggedUser.email),
     })
 
-    const onChangeGroup = (group: Group) => {
-        setGroup(group);
-        queryClient.invalidateQueries();
-        onClose();
-    }
+    useEffect(() => {
+        return () => { queryClient.invalidateQueries(); onClose(); };
+    }, [group])
 
     return (
         <Box
@@ -53,7 +52,7 @@ const GroupsModal = (props: any) => {
                 </Typography>
             }
             {groups && [emptyGroup, ...groups].map((g: Group) => (
-                <Box key={g.id} className="ArrayContainer" onClick={() => onChangeGroup(g)} sx={{ bgcolor: group.id === g.id ? '#efefef' : "" }}>
+                <Box key={g.id} className="ArrayContainer" onClick={() => setGroup(g)} sx={{ bgcolor: group.id === g.id ? '#efefef' : "" }}>
                     <Typography id="modal-modal-description">{g.name}</Typography>
                     {group.id === g.id && <CheckCircleIcon />}
                 </Box>
